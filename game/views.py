@@ -13,6 +13,7 @@ from initialize import add_player
 
 def index(request):
     # TODO countdown if game haven't started yet
+    # TODO show statistics during the game
     player = False
     if not request.user.is_anonymous() and request.user.is_authenticated():
         player = Player.objects.get(user=request.user)
@@ -43,8 +44,8 @@ def login_user(request):
 
 
 def logout(request):
+    # Logout, don't show anything, just redirect to index page
     django_logout(request)
-    # TODO consider if after logout print a successfull logout html or redirect
     return redirect('game:index')
 
 
@@ -54,7 +55,7 @@ def signup(request):
     # TODO merge files signup.html and successful_signup.html
     if request.method == 'POST':
         uf = UserForm(request.POST, prefix='user')
-        # TODO enforce on user non-empty first and last name
+        # TODO enforce user to give non-empty first and last name
         if uf.is_valid():
             # Create User object
             user = uf.save()
@@ -88,6 +89,7 @@ def deathnote(request):
         player.death_note = note
         player.save()
 
+    # Get all dead players that have written something in deathnote
     dead_players = Player.objects.filter(alive=False).exclude(death_note=None)
     return render(request, 'game/deathnote.html',
                   {'dead_players': dead_players})
@@ -101,7 +103,7 @@ def profile(request, signature):
 
 
 def profile_qr(request, signature):
-    player = Player.objects.get(signature=signature)
+    player = get_object_or_404(Player, signature=signature)
     return render(request, 'game/profile_qr.html', {"player": player})
 
 
@@ -132,7 +134,6 @@ def kill(request, kill_signature):
 
 
 def manual_kill(request):
-    # TODO think of a clearer way to do this
     kill_signature = request.POST.get("kill_signature", False)
     if kill_signature:
         return redirect('game:kill', kill_signature)
@@ -140,4 +141,4 @@ def manual_kill(request):
 
 
 # TODO implement a forum
-# TODO implement a in case of emergency contact admin view
+# TODO implement a 'in case of emergency contact admin' view

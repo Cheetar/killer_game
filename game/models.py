@@ -16,6 +16,9 @@ from django.utils.encoding import python_2_unicode_compatible
 
 
 class Game(models.Model):
+    """ This class stores only information about the game start and end.
+        Every player is linked to a game.
+    """
     name = models.CharField(max_length=200, blank=True)
     start_date = models.DateTimeField('start_date')
     end_date = models.DateTimeField('end_date')
@@ -30,6 +33,7 @@ class Player(models.Model):
     """ Player class is intended to store all the data about the user that
         concerns the game e.g. number of kills, target to kill
     """
+    # Link player to an user and to a game
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     game = models.ForeignKey(Game, on_delete=models.CASCADE)
 
@@ -40,8 +44,8 @@ class Player(models.Model):
         it's account. Killer in order to kill his victim, need to obtain
         the second signature, kill_signature (he may obtain it via QR code or
         by inserting the signature by hand)
-        Why two signatures? Beacuese a hacker can sniff urls with normal
-        signatures so it is no more secret. The kill_signature is only
+        Why two signatures? Beacuese a hacker can sniff urls containing normal
+        signatures, so it is no more secret. The kill_signature is only
         revealed when the victim is killed.
     """
     signature = models.CharField(max_length=32)
@@ -52,17 +56,24 @@ class Player(models.Model):
     alive = models.BooleanField(default=True)
     death_time = models.DateTimeField(
         'death_time', blank=True, null=True)
-    """ Each killed player can describe the way he was killed (these
+    """ Each dead player can describe the way he was killed (these
     descriptions are intended to be funny) e.g. "I was squashed by a giant
     ladybird" or refering to the literal act of killing "I was killed by a tall
-    cunning sportsman"
+    cunning sportsman". These descriptions (aka death notes) are presented
+    at the /deathnote/ and are shown to everybody.
     """
     death_note = models.TextField(blank=True, null=True)
 
     def __str__(self):
+        """ Whenever you call str(player) his real name(e.g. Jan Kowalski) is
+            shown
+        """
         return self.user.first_name + " " + self.user.last_name
 
     def generate_signatures(self):
+        """ Signatures are 16 byte random strings. These strings are stored
+            in hexadeimal form, so their length is 32.
+        """
         self.signature = os.urandom(16).encode("hex")
         self.kill_signature = os.urandom(16).encode("hex")
 
@@ -92,14 +103,16 @@ class Player(models.Model):
 
 class Kill(models.Model):
     # TODO implement Kill model
-    """ Storage all kills in game. Using this a player can see in /profile/ can
-        the list of all killed victims and times of kills.
+    """ Storage all kills in game. Using this a player can see in /profile/
+        the list of all killed victims and timestamps of these kills.
     """
     pass
 
 
 class UserForm(ModelForm):
-
+    """ This class is used in registration (/signup/). It allows to dynamically
+        generate registration form.
+    """
     class Meta:
         password = forms.CharField(widget=forms.PasswordInput)
         widgets = {

@@ -8,10 +8,14 @@ from django.contrib.auth.models import User
 from game.models import Game, Player
 
 
-# TODO initialize the game after game started
+# TODO initialize the game after game started (probably via cron)
 # TODO end the game after game end / if there are only two players alive
 
 def generate_targets():
+    """ Make list of all players in random order. Each player have to kill
+        the next player on the list. This ensures that the kill chain is a
+        one big cycle- at the end of the there will be only two players.
+    """
     players = list(Player.objects.all())
     shuffle(players)
     for i in range(len(players)):
@@ -40,7 +44,8 @@ def generate_players():
 
 def delete_all_players():
     # Not intended to be used in real app, just for debugging purposes
-    # TODO after deleting a player also delete its QR code
+    # TODO after deleting a player also delete its QR code png file
+    # QR codes are stored in /media/qr_codes/
     Player.objects.all().delete()
 
 
