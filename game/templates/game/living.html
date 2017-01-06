@@ -1,0 +1,6 @@
+<h1>Living players</h1>
+<ul>
+{% for player in living %}
+    <li>{{player}} ({{player.kills}} kills)</li>
+{% endfor %}
+</ul>

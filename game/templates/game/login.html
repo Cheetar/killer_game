@@ -1,0 +1,17 @@
+<head>
+    <title>Login page</title>
+</head>
+
+<body>
+    {% if failed_attempt == True %}
+        <p>Login attempt failed</p>
+    {% endif %}
+    <form action='{% url 'game:login_user' %}' method='post'>
+        {% csrf_token %} Username:
+        <br>
+        <input type="text" name="username"><br> Password:
+        <br>
+        <input type="password" name="password"><br>
+        <input type="submit" value="Log in">
+    </form>
+    </body

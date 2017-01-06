@@ -1,0 +1,16 @@
+{% load static %}
+
+<link rel="stylesheet" type="text/css" href="{% static 'game/style.css' %}" />
+
+<h1>Index page</h1>
+
+{% if player %}
+<p>Welcome {{player.user}}</p>
+<p><a href="{% url 'game:profile' player.signature %}">your profile</a></p>
+{% endif %}
+<a href="{% url 'game:manual_kill' %}">Kill</a><br>
+<a href="{% url 'game:login_user' %}">login</a><br>
+<a href="{% url 'game:signup' %}">signup</a><br>
+<a href="{% url 'game:rules' %}">rules</a><br>
+<a href="{% url 'game:living' %}">living players</a><br>
+<a href="{% url 'game:deathnote' %}">Deathnote</a><br>

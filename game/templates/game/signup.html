@@ -1,0 +1,5 @@
+<form method="POST" action="">{% csrf_token %}
+  <!-- TODO remove ugly requirements at username -->
+    {{userform.as_p}}
+    <input type="submit">
+</form>
