@@ -1,3 +1,4 @@
+from django.contrib.auth import logout as django_logout
 from django.contrib.auth import authenticate, login
 from django.http import HttpResponse
 from django.shortcuts import (get_object_or_404, redirect, render,
@@ -12,7 +13,6 @@ from initialize import add_player
 
 def index(request):
     # TODO countdown if game haven't started yet
-    # TODO create link to profile if logged in
     player = False
     if not request.user.is_anonymous() and request.user.is_authenticated():
         player = Player.objects.get(user=request.user)
@@ -42,9 +42,15 @@ def login_user(request):
         return render(request, 'game/login.html', {'failed_attempt': 'True', })
 
 
-# csrf_protect
+def logout(request):
+    django_logout(request)
+    # TODO consider if after logout print a successfull logout html or redirect
+    return redirect('game:index')
+
+
 @csrf_exempt  # TODO find out how to insert csrf tag
 def signup(request):
+    # TODO BUG, paswords are not stored in db
     # TODO merge files signup.html and successful_signup.html
     if request.method == 'POST':
         uf = UserForm(request.POST, prefix='user')

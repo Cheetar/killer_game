@@ -5,11 +5,17 @@
 <h1>Index page</h1>
 
 {% if player %}
-<p>Welcome {{player.user}}</p>
-<p><a href="{% url 'game:profile' player.signature %}">your profile</a></p>
+  <p>Welcome {{player.user}}</p>
+  <p><a href="{% url 'game:profile' player.signature %}">your profile</a></p>
 {% endif %}
+
 <a href="{% url 'game:manual_kill' %}">Kill</a><br>
-<a href="{% url 'game:login_user' %}">login</a><br>
+{% if player %}
+  <a href="{% url 'game:logout' %}">logout</a><br>
+{% endif %}
+{% if not player %}
+  <a href="{% url 'game:login_user' %}">login</a><br>
+{% endif %}
 <a href="{% url 'game:signup' %}">signup</a><br>
 <a href="{% url 'game:rules' %}">rules</a><br>
 <a href="{% url 'game:living' %}">living players</a><br>
