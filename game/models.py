@@ -68,7 +68,7 @@ class Player(models.Model):
 
     def get_absolute_url(self):
         # TODO get the domain name instead of hardcoded localhost
-        return "http://127.0.0.1:8000" + reverse('game:manual_kill') + "%s/" % self.kill_signature
+        return "http://127.0.0.1:8000/kill/" + self.kill_signature + "/"
 
     def generate_qrcode(self):
         qr = qrcode.QRCode(
@@ -91,6 +91,7 @@ class Player(models.Model):
 
 
 class Kill(models.Model):
+    # TODO implement Kill model
     """ Storage all kills in game. Using this a player can see in /profile/ can
         the list of all killed victims and times of kills.
     """

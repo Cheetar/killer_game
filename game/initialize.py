@@ -20,6 +20,7 @@ def generate_targets():
 
 
 def add_player(user):
+    # TODO make this function a Player's constructor
     player = Player()
     player.user = user
     player.game = Game.objects.get(pk=1)
@@ -39,6 +40,7 @@ def generate_players():
 
 def delete_all_players():
     # Not intended to be used in real app, just for debugging purposes
+    # TODO after deleting a player also delete its QR code
     Player.objects.all().delete()
 
 
