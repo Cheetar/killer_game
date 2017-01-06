@@ -1,11 +1,18 @@
 <p>Hello {{player.user}}</p>
+
 {% if not player.alive %}
-<p>Sorry, you have been killed :/<p>
+  <p>Specify the way you were killed:</p>
+  <form action="{% url 'game:deathnote' %}" method="post"> {% csrf_token %}
+  <textarea name='note' cols="40" rows="5"></textarea>
+  <input type="submit" value="Submit">
+  </form>
 {% endif %}
+
 <p>You killed <b>{{player.kills}}</b> players</p>
+
 {% if player.alive %}
-<p>Your target: <b>{{player.current_target}}</b></p>
-<!-- TODO History of player's kills -->
-<!-- TODO Make this link a big red button -->
-<a href="{% url 'game:profile_qr' player.signature %}">Got killed</a>
+  <p>Your target: <b>{{player.current_target}}</b></p>
+  <!-- TODO History of player's kills -->
+  <!-- TODO Make this link a big red button -->
+  <a href="{% url 'game:profile_qr' player.signature %}">Got killed</a>
 {% endif %}

@@ -76,14 +76,20 @@ def living(request):
 
 
 def deathnote(request):
-    # TODO create view for deathnote
-    return render(request, 'game/deathnote.html')
+    note = request.POST.get("note", False)
+    if note:
+        player = Player.objects.get(user=request.user)
+        player.death_note = note
+        player.save()
+
+    dead_players = Player.objects.filter(alive=False).exclude(death_note=None)
+    return render(request, 'game/deathnote.html',
+                  {'dead_players': dead_players})
 
 
 def profile(request, signature):
     # If invalid signature show 404
     player = get_object_or_404(Player, signature=signature)
-    # TODO after death allow player to fill his deathnote
     return render(request, 'game/profile.html',
                   {"player": player})
 
@@ -123,8 +129,7 @@ def manual_kill(request):
     # TODO think of a clearer way to do this
     kill_signature = request.POST.get("kill_signature", False)
     if kill_signature:
-        # TODO make not hardcoded url
-        return redirect('/kill/' + kill_signature + "/")
+        return redirect('game:kill', kill_signature)
     return render(request, 'game/manual_kill.html')
 
 
