@@ -1,3 +1,5 @@
+from random import shuffle
+
 from django.contrib.auth import logout as django_logout
 from django.contrib.auth import authenticate, login
 from django.http import HttpResponse
@@ -76,7 +78,9 @@ def rules(request):
 
 def living(request):
     # Get all alive players
-    living = Player.objects.filter(alive=True)
+    living = list(Player.objects.filter(alive=True))
+    # Sort alphabetically players to avoid leaking kill chain information
+    living = sorted(living, key=str)
     # Sort them by number of kills
     living = sorted(living, key=lambda player: -player.kills)
     return render(request, 'game/living.html', {'living': living})
