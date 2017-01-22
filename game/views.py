@@ -135,11 +135,8 @@ def kill(request, kill_signature):
     victim.save()
 
     # Add kill objects
-    kill = Kill()
-    kill.killer = killer
-    kill.victim = victim
-    kill.kill_time = timezone.now()
-    kill.save()
+    # kill = Kill(killer=killer, victim=victim, kill_time=timezone.now())
+    # kill.save()
 
     return render(request, 'game/kill.html',
                   {"victim": victim, "killer": killer})

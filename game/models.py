@@ -102,6 +102,7 @@ class Player(models.Model):
 
 
 class Kill(models.Model):
+    # TODO implement kill class
     """ Storage all kills in game. Using this a player can see in /profile/
         the list of all killed victims and timestamps of these kills.
     """
