@@ -102,10 +102,12 @@ class Player(models.Model):
 
 
 class Kill(models.Model):
-    # TODO implement Kill model
     """ Storage all kills in game. Using this a player can see in /profile/
         the list of all killed victims and timestamps of these kills.
     """
+    # killer = models.ManyToManyField(Player)
+    # victim = models.ForeignKey(Player, on_delete=models.CASCADE)
+    # kill_time = models.DateTimeField('kill_time', blank=True, null=True)
     pass
 
 

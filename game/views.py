@@ -9,7 +9,7 @@ from django.template import RequestContext
 from django.utils import timezone
 from django.views.decorators.csrf import csrf_exempt, csrf_protect
 
-from game.models import Game, Player, UserForm
+from game.models import Game, Kill, Player, UserForm
 from initialize import add_player
 
 
@@ -87,6 +87,7 @@ def living(request):
 
 
 def deathnote(request):
+    # Add a note
     note = request.POST.get("note", False)
     if note:
         player = Player.objects.get(user=request.user)
@@ -132,6 +133,13 @@ def kill(request, kill_signature):
     victim.death_time = timezone.now()
     victim.current_target = None
     victim.save()
+
+    # Add kill objects
+    kill = Kill()
+    kill.killer = killer
+    kill.victim = victim
+    kill.kill_time = timezone.now()
+    kill.save()
 
     return render(request, 'game/kill.html',
                   {"victim": victim, "killer": killer})
