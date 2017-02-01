@@ -103,8 +103,9 @@ def deathnote(request):
 def profile(request, signature):
     # If invalid signature show 404
     player = get_object_or_404(Player, signature=signature)
+    kills = Kill.objects.filter(killer=player)
     return render(request, 'game/profile.html',
-                  {"player": player})
+                  {"player": player, "kills": kills})
 
 
 def profile_qr(request, signature):
@@ -135,8 +136,8 @@ def kill(request, kill_signature):
     victim.save()
 
     # Add kill objects
-    # kill = Kill(killer=killer, victim=victim, kill_time=timezone.now())
-    # kill.save()
+    kill = Kill(killer=killer, victim=victim, kill_time=timezone.now())
+    kill.save()
 
     return render(request, 'game/kill.html',
                   {"victim": victim, "killer": killer})
@@ -147,7 +148,3 @@ def manual_kill(request):
     if kill_signature:
         return redirect('game:kill', kill_signature)
     return render(request, 'game/manual_kill.html')
-
-
-# TODO implement a forum
-# TODO implement a 'in case of emergency contact admin' view

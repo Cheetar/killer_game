@@ -1,2 +1,3 @@
-*pyc
+*.pyc
+*.png
 /db.sqlite3

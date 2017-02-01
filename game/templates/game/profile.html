@@ -10,9 +10,16 @@
 
 <p>You killed <b>{{player.kills}}</b> players</p>
 
+{% if player.kills > 0 %}
+  <ul>
+  {% for kill in kills %}
+    <li>{{kill.victim}} at {{kill.kill_time}}</li>
+  {% endfor %}
+  </ul>
+{% endif %}
+
 {% if player.alive %}
   <p>Your target: <b>{{player.current_target}}</b></p>
-  <!-- TODO History of player's kills -->
   <!-- TODO Make this link a big red button -->
   <a href="{% url 'game:profile_qr' player.signature %}">Got killed</a>
 {% endif %}
