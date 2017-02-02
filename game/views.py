@@ -14,8 +14,7 @@ from initialize import add_player
 
 
 def index(request):
-    # TODO countdown if game haven't started yet
-    # TODO show statistics during the game
+    # TODO FRONTEND, countdown if game haven't started yet
     player = False
     if not request.user.is_anonymous() and request.user.is_authenticated():
         player = Player.objects.get(user=request.user)
@@ -54,10 +53,9 @@ def logout(request):
 @csrf_exempt  # TODO find out how to insert csrf tag
 def signup(request):
     # TODO BUG, paswords are not stored in db
-    # TODO merge files signup.html and successful_signup.html
     if request.method == 'POST':
         uf = UserForm(request.POST, prefix='user')
-        # TODO enforce user to give non-empty first and last name
+        # TODO FRONTEND, enforce user to give non-empty first and last name
         if uf.is_valid():
             # Create User object
             user = uf.save()
