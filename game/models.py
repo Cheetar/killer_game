@@ -116,11 +116,17 @@ class UserForm(ModelForm):
     """ This class is used in registration (/signup/). It allows to dynamically
         generate registration form.
     """
+    password = forms.CharField(widget=forms.PasswordInput)
+
     class Meta:
-        password = forms.CharField(widget=forms.PasswordInput)
-        widgets = {
-            'password': forms.PasswordInput(),
-        }
         model = User
         exclude = ['id']
         fields = ['username', 'password', 'first_name', 'last_name']
+
+    def save(self, commit=True):
+        # Save the provided password in hashed format
+        user = super(UserForm, self).save(commit=False)
+        user.set_password(self.cleaned_data["password"])
+        if commit:
+            user.save()
+        return user
