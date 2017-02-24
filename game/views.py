@@ -52,7 +52,6 @@ def logout(request):
 
 @csrf_exempt  # TODO find out how to insert csrf tag
 def signup(request):
-    # TODO BUG, paswords are not stored in db
     if request.method == 'POST':
         uf = UserForm(request.POST, prefix='user')
         # TODO FRONTEND, enforce user to give non-empty first and last name
