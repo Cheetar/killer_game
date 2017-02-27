@@ -1,2 +1,7 @@
-<p>At kill view</p>
-<p>{{killer}} killed {{victim}}</p>
+{% extends "game/base.html" %}
+
+{% block title %}Kill{% endblock title %}
+
+{% block content %}
+<h1 id='bloody-congratz'>{{killer}} killed {{victim}}!</h1>
+{% endblock content %}

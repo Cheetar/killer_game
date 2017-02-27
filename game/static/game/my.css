@@ -1,0 +1,55 @@
+#content{
+  background-color: #111;
+  float: left;
+  width: 100%;
+  text-align: center;
+  box-shadow: 0 0 0.5em 0.5em #777;
+  opacity: 0.8;
+  padding: 20px;
+  padding-top: 0px;
+
+  -webkit-border-radius: 5px 5px 5px 5px;
+  -moz-border-radius: 5px 5px 5px 5px;
+  -o-border-radius: 5px 5px 5px 5px;
+  border-radius: 5px 5px 5px 5px;
+}
+
+#content_title{
+  text-shadow: 1px 1px 1px #ccc;
+}
+
+#login-panel{
+  width: 60%;
+  margin: 0 auto;
+}
+
+code{
+  background-color: rgba(0,0,0,0);
+  color: #999;
+}
+
+#back{
+  padding-bottom: 0px;
+}
+
+#kill-link{
+  color: white;
+}
+
+#signup-btn{
+  //background-color: rgba(255, 255, 255, 0.7);
+}
+
+@bloody-font {
+  // TODO make this work
+    font-family: bloodyFont;
+    src: url(BLOODY.ttf);
+}
+
+#bloody-congratz{
+  font-family: bloodyFont;
+}
+
+#signup-panel label,input, select, textarea{
+  color: black;
+}

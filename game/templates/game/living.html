@@ -1,6 +1,11 @@
-<h1>Living players</h1>
-<ul>
-{% for player in living %}
-    <li>{{player}} ({{player.kills}} kills)</li>
-{% endfor %}
-</ul>
+{% extends "game/base_subpage.html" %}
+
+{% block title %}Living players{% endblock title %}
+
+{% block data %}
+  <ul>
+  {% for player in living %}
+      <li>{{player}} ({{player.kills}} kills)</li>
+  {% endfor %}
+  </ul>
+{% endblock data %}

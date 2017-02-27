@@ -15,9 +15,12 @@ from initialize import add_player
 
 def index(request):
     # TODO FRONTEND, countdown if game haven't started yet
+
+    # If you are logged in you are redirected to profile
     player = False
     if not request.user.is_anonymous() and request.user.is_authenticated():
         player = Player.objects.get(user=request.user)
+        return redirect('game:profile', player.signature)
     return render(request, 'game/index.html',
                   {'player': player})
 
@@ -52,6 +55,9 @@ def logout(request):
 
 @csrf_exempt  # TODO find out how to insert csrf tag
 def signup(request):
+    if request.user.is_authenticated():
+        return redirect('game:index')
+
     if request.method == 'POST':
         uf = UserForm(request.POST, prefix='user')
         # TODO FRONTEND, enforce user to give non-empty first and last name
@@ -70,31 +76,43 @@ def signup(request):
 
 
 def rules(request):
-    return render(request, 'game/rules.html')
+    player = False
+    if not request.user.is_anonymous():
+        player = request.user.player
+    return render(request, 'game/rules.html', {'player': player})
 
 
 def living(request):
+    # TODO display all players and make dead ones crossed
+    player = False
+    if not request.user.is_anonymous():
+        player = request.user.player
+
     # Get all alive players
     living = list(Player.objects.filter(alive=True))
     # Sort alphabetically players to avoid leaking kill chain information
     living = sorted(living, key=str)
     # Sort them by number of kills
     living = sorted(living, key=lambda player: -player.kills)
-    return render(request, 'game/living.html', {'living': living})
+    return render(request, 'game/living.html',
+                  {'living': living, 'player': player})
 
 
 def deathnote(request):
+    player = False
+    if not request.user.is_anonymous():
+        player = request.user.player
+
     # Add a note
     note = request.POST.get("note", False)
     if note:
-        player = Player.objects.get(user=request.user)
         player.death_note = note
         player.save()
 
     # Get all dead players that have written something in deathnote
     dead_players = Player.objects.filter(alive=False).exclude(death_note=None)
     return render(request, 'game/deathnote.html',
-                  {'dead_players': dead_players})
+                  {'dead_players': dead_players, 'player': player})
 
 
 def profile(request, signature):
@@ -114,11 +132,15 @@ def kill(request, kill_signature):
     """ User can acces this view only by scanning QR code of the victim or by
         manually inserting killing signature
     """
+    player = False
+    if not request.user.is_anonymous():
+        player = request.user.player
+
     victim = get_object_or_404(Player, kill_signature=kill_signature)
     # If victim is already killed
     if not victim.alive:
         # TODO handle this situation nicer than just HttpResponse
-        return HttpResponse("{0} is already dead!".format(victim))
+        return render(request, 'game/already_killed.html', {'dead_player': victim, 'player': player})
     killer = Player.objects.get(current_target=victim)
 
     # Update killer's status
@@ -141,7 +163,11 @@ def kill(request, kill_signature):
 
 
 def manual_kill(request):
+    player = False
+    if not request.user.is_anonymous():
+        player = request.user.player
+
     kill_signature = request.POST.get("kill_signature", False)
     if kill_signature:
         return redirect('game:kill', kill_signature)
-    return render(request, 'game/manual_kill.html')
+    return render(request, 'game/manual_kill.html', {'player': player})

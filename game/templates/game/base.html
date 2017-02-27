@@ -1,3 +1,5 @@
+{% load static %}
+
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -7,22 +9,25 @@
     <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
     <meta name="description" content="">
     <meta name="author" content="">
+    <!-- TODO create own icon-->
     <link rel="icon" href="http://web.gimakad.torun.pl/sites/all/themes/gila2/favicon.ico">
 
-    <title>Cover Template for Bootstrap</title>
+    <title>{% block title %}Killer game{% endblock %}</title>
 
     <!-- Bootstrap core CSS -->
-    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <link href="{% static 'game/css/bootstrap.min.css' %}" rel="stylesheet">
 
     <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
-    <link href="css/ie10-viewport-bug-workaround.css" rel="stylesheet">
+    <link href="{% static 'game/css/ie10-viewport-bug-workaround.css' %}" rel="stylesheet">
 
     <!-- Custom styles for this template -->
-    <link href="cover.css" rel="stylesheet">
+    <link href="{% static 'game/cover.css' %}" rel="stylesheet">
+
+    <link href="{% static 'game/my.css' %}" rel="stylesheet">
 
     <!-- Just for debugging purposes. Don't actually copy these 2 lines! -->
     <!--[if lt IE 9]><script src="../../assets/js/ie8-responsive-file-warning.js"></script><![endif]-->
-    <script src="js/ie-emulation-modes-warning.js"></script>
+    <script src="{% static 'game/js/ie-emulation-modes-warning.js' %}"></script>
 
     <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
     <!--[if lt IE 9]>
@@ -41,35 +46,25 @@
 
           <div class="masthead clearfix">
             <div class="inner">
-              <h3 class="masthead-brand">Killer game</h3>
+              <h3 class="masthead-brand"><a href="http://localhost:8000/">Killer game</a></h3>
               <nav>
                 <ul class="nav masthead-nav">
-                  <li><a href="#">Rules</a></li>
-                  <li><a href="#">Playing</a></li>
-                  <li><a href="#">Deathnote</a></li>
-                  <li><a href="#">Login</a></li>
+                  <li><a href="{% url 'game:rules' %}">Rules</a></li>
+                  <li><a href="{% url 'game:living' %}">Playing</a></li>
+                  <li><a href="{% url 'game:deathnote' %}">Deathnote</a></li>
+                  <li><a id='kill-link' href="{% url 'game:manual_kill' %}">Kill</a></li>
+                  {% if not player %}
+                  <li><a href="{% url 'game:login_user' %}">Login</a></li>
+                  {% else %}
+                  <li><a href="{% url 'game:logout' %}">Logout</a></li>
+                  {% endif %}
                 </ul>
               </nav>
-              <!-- div id="navbar" class="navbar-collapse collapse">
-                <form class="navbar-form navbar-right">
-                  <div class="form-group">
-                    <input type="text" placeholder="Email" class="form-control">
-                  </div>
-                  <div class="form-group">
-                    <input type="password" placeholder="Password" class="form-control">
-                  </div>
-                  <button type="submit" class="btn btn-success">Sign in</button>
-                </form>
-            </div><!--/.navbar-collapse -->
             </div>
           </div>
 
           <div class="inner cover">
-            <h1 class="cover-heading"><b>Kill</b></h1>
-            <p class="lead">...and don't get killed</p>
-            <p class="lead">
-              <a href="#" class="btn btn-lg btn-default">Sign up</a>
-            </p>
+            {% block content %}<p>Content</p>{% endblock %}
           </div>
 
           <div class="mastfoot">
@@ -88,9 +83,9 @@
     ================================================== -->
     <!-- Placed at the end of the document so the pages load faster -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
-    <script>window.jQuery || document.write('<script src="js/vendor/jquery.min.js"><\/script>')</script>
-    <script src="js/bootstrap.min.js"></script>
+    <script>window.jQuery || document.write('<script src="{% static 'game/js/vendor/jquery.min.js' %}"><\/script>')</script>
+    <script src="{% static 'game/js/bootstrap.min.js' %}"></script>
     <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
-    <script src="js/ie10-viewport-bug-workaround.js"></script>
+    <script src="{% static 'game/js/ie10-viewport-bug-workaround.js' %}"></script>
   </body>
 </html>

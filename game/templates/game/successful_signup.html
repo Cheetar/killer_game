@@ -1,2 +1,7 @@
-<h1>Registration finished successfully</h1>
-<p>Welcome {{username}}</p>
+{% extends "game/base.html" %}
+
+{% block title %}successful_signup{% endblock title %}
+
+{% block content %}
+<h1>Welcome {{username}}</h1>
+{% endblock content %}

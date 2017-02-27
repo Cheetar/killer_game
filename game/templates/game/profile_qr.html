@@ -1,4 +1,11 @@
-<p>To kill scann the QR</p>
-<img src="{{ player.qrcode.url }}">
-<p>or rewrite the secret code:</p><br/>
-<b>{{player.kill_signature}}</b>
+{% extends "game/base_subpage.html" %}
+
+{% block title %}Got killed{% endblock title %}
+
+{% block data %}
+  <p>To confirm the kill scann the QR</p>
+  <img src="{{ player.qrcode.url }}"><br/><br/>
+  <p>or rewrite the secret code:
+  <b>{{player.kill_signature}}</b></p><br/>
+  <p><a id='back' href="{% url 'game:index' %}"><code>&lt;back&gt;</code></a></p>
+{% endblock data %}

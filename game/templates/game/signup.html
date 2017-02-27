@@ -1,5 +1,30 @@
+{% extends "game/base.html" %}
+
+{% block title %}Signup{% endblock title %}
+
+{% block content %}
+
 <form method="POST" action="">{% csrf_token %}
   <!-- TODO FRONTEND, remove ugly requirements at username -->
-    {{userform.as_p}}
-    <input type="submit">
-</form>
+  <div id='login-panel' class="panel panel-default">
+      <div class="panel-heading">
+        <h3 class="panel-title">Create an account</h3>
+    </div>
+      <div class="panel-body" id="signup-panel">
+        <form accept-charset="UTF-8" role="form" method='POST' action='{% url 'game:login_user' %}'>
+          {% csrf_token %}
+          <fieldset>
+
+            {% for field in userform %}
+              <div class="form-group">
+                <!--<input class="form-control" placeholder="username" name="username" type="text">-->
+                {{ field.label_tag }}{{ field }}
+              </div>
+            {% endfor %}
+
+          <input class="btn btn-lg btn-success btn-block" type="submit" value="Sign up">
+        </fieldset>
+      </form>
+    </div>
+  </div>
+{% endblock content %}

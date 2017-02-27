@@ -1,0 +1,10 @@
+{% extends "game/base.html" %}
+
+{% block content %}
+  <div class='row-marketing' id='content'>
+    <h1 id='content_title'>{% block title %} Title {% endblock title %}</h1>
+    <hr/>
+    {% block data %}
+    {% endblock data %}
+  </div>
+{% endblock content %}

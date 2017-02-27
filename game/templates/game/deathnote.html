@@ -1,7 +1,14 @@
-<h1>Deathnote</h1>
+{% extends "game/base_subpage.html" %}
 
-<ul>
-{% for player in dead_players %}
-  <li>{{ player }} ({{ player.kills }}) -- {{ player.death_time }} -- <b>{{ player.death_note }}</b></li>
-{% endfor %}
-</ul>
+{% block title %}Deathnote{% endblock title %}
+
+{% block data %}
+  <ul>
+  {% for player in dead_players %}
+    <li>{{ player }} ({{ player.kills }}) -- {{ player.death_time }} -- {{ player.death_note }}</li>
+  {% endfor %}
+  </ul>
+  {% if not dead_players%}
+    <p>Deathnote is empty :(</p>
+  {% endif %}
+{% endblock data %}

@@ -1,25 +1,29 @@
-<p>Hello {{player.user}}</p>
+{% extends "game/base_subpage.html" %}
 
-{% if not player.alive %}
-  <p>Specify the way you were killed:</p>
-  <form action="{% url 'game:deathnote' %}" method="post"> {% csrf_token %}
-  <textarea name='note' cols="40" rows="5"></textarea>
-  <input type="submit" value="Submit">
-  </form>
-{% endif %}
+{% block title %}{{player.user}}'s profile{% endblock title %}
 
-<p>You killed <b>{{player.kills}}</b> players</p>
+{% block data %}
+  {% if not player.alive %}
+    <p>Specify the way you were killed:</p>
+    <form action="{% url 'game:deathnote' %}" method="post"> {% csrf_token %}
+    <textarea name='note' cols="40" rows="5">{{player.death_note}}</textarea>
+    <input type="submit" value="Submit">
+    </form>
+  {% endif %}
 
-{% if player.kills > 0 %}
-  <ul>
-  {% for kill in kills %}
-    <li>{{kill.victim}} at {{kill.kill_time}}</li>
-  {% endfor %}
-  </ul>
-{% endif %}
+  <p>You killed <b>{{player.kills}}</b> players</p>
 
-{% if player.alive %}
-  <p>Your target: <b>{{player.current_target}}</b></p>
-  <!-- TODO FRONTEND, Make this link a big red button -->
-  <a href="{% url 'game:profile_qr' player.signature %}">Got killed</a>
-{% endif %}
+  {% if player.kills > 0 %}
+    <ul>
+    {% for kill in kills %}
+      <li>{{kill.victim}} at {{kill.kill_time}}</li>
+    {% endfor %}
+    </ul>
+  {% endif %}
+
+  {% if player.alive %}
+    <p>Your target: <b>{{player.current_target}}</b></p>
+    <!-- TODO FRONTEND, Make this link a big red button -->
+    <a href="{% url 'game:profile_qr' player.signature %}"><button type="button" class="btn btn-danger"><b>Got killed</b></button></a>
+  {% endif %}
+{% endblock data %}

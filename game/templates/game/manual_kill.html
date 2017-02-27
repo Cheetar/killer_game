@@ -1,6 +1,30 @@
-<form action="" method="post">
+{% extends "game/base.html" %}
+
+{% block title %}Kill{% endblock title %}
+
+{% block content %}
+<div id='login-panel' class="panel panel-default">
+    <div class="panel-heading">
+      <h3 class="panel-title">Insert your target's secret code</h3>
+  </div>
+    <div class="panel-body">
+      <form accept-charset="UTF-8" role="form" method='POST' action=''>
+        {% csrf_token %}
+        <fieldset>
+          <div class="form-group">
+            <input class="form-control" placeholder="kill signature" name="kill_signature" type="text" value="">
+          </div>
+          <input class="btn btn-lg btn-danger" type="submit" value="KILL">
+        </fieldset>
+      </form>
+    </div>
+</div>
+{% endblock content %}
+
+
+<!--<form action="" method="post">
 {% csrf_token %}
 Insert your victim's secret code:<br/>
 <input type="text" name="kill_signature"><br/>
 <input type="submit" value="KILL">
-</form>
+</form>-->
