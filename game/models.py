@@ -80,7 +80,6 @@ class Player(models.Model):
         self.kill_signature = os.urandom(16).encode("hex")
 
     def get_absolute_url(self):
-        # TODO get the domain name instead of hardcoded localhost
         return DOMAIN + "kill/" + self.kill_signature + "/"
 
     def generate_qrcode(self):

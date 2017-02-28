@@ -16,7 +16,6 @@ from initialize import add_player
 
 def index(request):
     # TODO FRONTEND, countdown if game haven't started yet
-    # TODO create decorators for all views redirecting to countdown if game
     # hasn't started yet
 
     # If you are logged in you are redirected to profile
@@ -91,7 +90,6 @@ def rules(request):
 
 
 def living(request):
-    # TODO display all players and make dead ones crossed
     try:
         player = request.user.player
     except:
