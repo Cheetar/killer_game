@@ -3,6 +3,7 @@ import socket
 from random import shuffle
 
 import qrcode
+from django.conf import settings
 from django.contrib.auth.models import User
 
 from game.models import Game, Player
@@ -35,7 +36,7 @@ def add_player(user):
 
 
 def generate_players():
-    # To every user attach Player object
+    # To every user that is not admin attach Player object
     for user in User.objects.filter(is_staff=False):
         add_player(user)
     generate_targets()
@@ -43,9 +44,10 @@ def generate_players():
 
 def delete_all_players():
     # Not intended to be used in real app, just for debugging purposes
-    # TODO after deleting a player also delete its QR code png file
-    # QR codes are stored in /media/qr_codes/
     Player.objects.all().delete()
+    # QR codes are stored in /media/qr_codes/
+    # when deleting players, all the QR codes perish
+    os.system('rm ' + settings.MEDIA_ROOT + '/qrcodes/*')
 
 
 def restart_players():
