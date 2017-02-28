@@ -21,7 +21,7 @@ def index(request):
 
     # If you are logged in you are redirected to profile
     player = False
-    if not request.user.is_anonymous() and request.user.is_authenticated():
+    if not request.user.is_anonymous() and request.user.is_authenticated() and not request.user.is_staff:
         player = Player.objects.get(user=request.user)
         return redirect('game:profile', player.signature)
     return render(request, 'game/index.html',
@@ -83,17 +83,19 @@ def signup(request):
 
 
 def rules(request):
-    player = False
-    if not request.user.is_anonymous():
+    try:
         player = request.user.player
+    except:
+        player = False
     return render(request, 'game/rules.html', {'player': player})
 
 
 def living(request):
     # TODO display all players and make dead ones crossed
-    player = False
-    if not request.user.is_anonymous():
+    try:
         player = request.user.player
+    except:
+        player = False
 
     # Get all alive players
     living = list(Player.objects.filter(alive=True))
@@ -106,9 +108,10 @@ def living(request):
 
 
 def deathnote(request):
-    player = False
-    if not request.user.is_anonymous():
+    try:
         player = request.user.player
+    except:
+        player = False
 
     # Add a note
     note = request.POST.get("note", False)
@@ -139,14 +142,14 @@ def kill(request, kill_signature):
     """ User can acces this view only by scanning QR code of the victim or by
         manually inserting killing signature
     """
-    player = False
-    if not request.user.is_anonymous():
+    try:
         player = request.user.player
+    except:
+        player = False
 
     victim = get_object_or_404(Player, kill_signature=kill_signature)
     # If victim is already killed
     if not victim.alive:
-        # TODO handle this situation nicer than just HttpResponse
         return render(request, 'game/already_killed.html',
 
                       {'dead_player': victim, 'player': player})
@@ -172,9 +175,10 @@ def kill(request, kill_signature):
 
 
 def manual_kill(request):
-    player = False
-    if not request.user.is_anonymous():
+    try:
         player = request.user.player
+    except:
+        player = False
 
     kill_signature = request.POST.get("kill_signature", False)
     if kill_signature:
