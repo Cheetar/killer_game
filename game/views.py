@@ -60,15 +60,18 @@ def signup(request):
 
     if request.method == 'POST':
         uf = UserForm(request.POST, prefix='user')
-        # TODO FRONTEND, enforce user to give non-empty first and last name
         if uf.is_valid():
             # Create User object
             user = uf.save()
             # Create Player object for the user
             add_player(user)
+            # Log the user in
+            user = authenticate(username=uf.cleaned_data[
+                                'username'], password=uf.cleaned_data['password'])
+            login(request, user)
             return render(request,
                           'game/successful_signup.html',
-                          {"username": user.username}
+                          {"username": user.username, 'player': user.player}
                           )
     else:
         uf = UserForm(prefix='user')

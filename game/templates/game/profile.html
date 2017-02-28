@@ -6,7 +6,7 @@
   {% if not player.alive %}
     <p>Specify the way you were killed:</p>
     <form action="{% url 'game:deathnote' %}" method="post"> {% csrf_token %}
-    <textarea name='note' cols="40" rows="5">{{player.death_note}}</textarea>
+    <textarea name='note' cols="40" rows="5">{% if player.death_note %} {{player.death_note}} {% endif%}</textarea>
     <input type="submit" value="Submit">
     </form>
   {% endif %}

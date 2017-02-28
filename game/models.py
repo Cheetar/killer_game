@@ -117,6 +117,8 @@ class UserForm(ModelForm):
         generate registration form.
     """
     password = forms.CharField(widget=forms.PasswordInput)
+    first_name = forms.CharField(required=True)
+    last_name = forms.CharField(required=True)
 
     class Meta:
         model = User
