@@ -23,7 +23,6 @@
 
   {% if player.alive %}
     <p>Your target: <b>{{player.current_target}}</b></p>
-    <!-- TODO FRONTEND, Make this link a big red button -->
     <a href="{% url 'game:profile_qr' player.signature %}"><button type="button" class="btn btn-danger"><b>Got killed</b></button></a>
   {% endif %}
 {% endblock data %}
