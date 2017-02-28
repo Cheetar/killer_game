@@ -14,6 +14,8 @@ from django.forms import ModelForm
 from django.utils import timezone
 from django.utils.encoding import python_2_unicode_compatible
 
+DOMAIN = "http://localhost:8000/"
+
 
 class Game(models.Model):
     """ This class stores only information about the game start and end.
@@ -79,7 +81,7 @@ class Player(models.Model):
 
     def get_absolute_url(self):
         # TODO get the domain name instead of hardcoded localhost
-        return "http://127.0.0.1:8000/kill/" + self.kill_signature + "/"
+        return DOMAIN + "kill/" + self.kill_signature + "/"
 
     def generate_qrcode(self):
         qr = qrcode.QRCode(

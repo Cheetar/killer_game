@@ -6,6 +6,7 @@ from django.http import HttpResponse
 from django.shortcuts import (get_object_or_404, redirect, render,
                               render_to_response)
 from django.template import RequestContext
+from django.urls import reverse
 from django.utils import timezone
 from django.views.decorators.csrf import csrf_exempt, csrf_protect
 
@@ -15,6 +16,8 @@ from initialize import add_player
 
 def index(request):
     # TODO FRONTEND, countdown if game haven't started yet
+    # TODO create decorators for all views redirecting to countdown if game
+    # hasn't started yet
 
     # If you are logged in you are redirected to profile
     player = False
@@ -66,8 +69,9 @@ def signup(request):
             # Create Player object for the user
             add_player(user)
             # Log the user in
-            user = authenticate(username=uf.cleaned_data[
-                                'username'], password=uf.cleaned_data['password'])
+            user = authenticate(
+                username=uf.cleaned_data['username'],
+                password=uf.cleaned_data['password'])
             login(request, user)
             return render(request,
                           'game/successful_signup.html',
@@ -143,7 +147,9 @@ def kill(request, kill_signature):
     # If victim is already killed
     if not victim.alive:
         # TODO handle this situation nicer than just HttpResponse
-        return render(request, 'game/already_killed.html', {'dead_player': victim, 'player': player})
+        return render(request, 'game/already_killed.html',
+
+                      {'dead_player': victim, 'player': player})
     killer = Player.objects.get(current_target=victim)
 
     # Update killer's status

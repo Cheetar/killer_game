@@ -36,8 +36,7 @@ def add_player(user):
 
 def generate_players():
     # To every user attach Player object
-    # TODO create Player object only for non-admin users
-    for user in User.objects.all():
+    for user in User.objects.filter(is_staff=False):
         add_player(user)
     generate_targets()
 
