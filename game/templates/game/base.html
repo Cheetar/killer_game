@@ -53,10 +53,10 @@
                   <li><a href="{% url 'game:living' %}">Playing</a></li>
                   <li><a href="{% url 'game:deathnote' %}">Deathnote</a></li>
                   <li><a id='kill-link' href="{% url 'game:manual_kill' %}">Kill</a></li>
-                  {% if not player %}
-                  <li><a href="{% url 'game:login_user' %}">Login</a></li>
-                  {% else %}
+                  {% if player or request.user.is_staff %}
                   <li><a href="{% url 'game:logout' %}">Logout</a></li>
+                  {% else %}
+                  <li><a href="{% url 'game:login_user' %}">Login</a></li>
                   {% endif %}
                 </ul>
               </nav>
