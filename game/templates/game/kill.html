@@ -3,5 +3,6 @@
 {% block title %}Kill{% endblock title %}
 
 {% block content %}
-<h1 id='bloody-congratz'>{{killer}} killed {{victim}}!</h1>
+<meta http-equiv="refresh" content="3;{% url 'game:index' %}" />
+<h1 id='bloody-congratz'><b>{{killer}} killed {{victim}}!</b></h1>
 {% endblock content %}

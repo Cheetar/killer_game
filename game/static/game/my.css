@@ -36,18 +36,15 @@ code{
   color: white;
 }
 
-#signup-btn{
-  //background-color: rgba(255, 255, 255, 0.7);
-}
-
-@bloody-font {
+@font-face {
   // TODO make this font work
     font-family: bloodyFont;
-    src: url(BLOODY.ttf);
+    src: url(/static/game/BLOODY.ttf) format('truetype'),
 }
 
 #bloody-congratz{
   font-family: bloodyFont;
+  color: red;
 }
 
 #signup-panel label,input, select, textarea{

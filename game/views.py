@@ -74,8 +74,7 @@ def signup(request):
             login(request, user)
             return render(request,
                           'game/successful_signup.html',
-                          {"username": user.username, 'player': user.player}
-                          )
+                          {"username": user.username, 'player': user.player})
     else:
         uf = UserForm(prefix='user')
     return render_to_response('game/signup.html', dict(userform=uf))
