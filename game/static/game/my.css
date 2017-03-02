@@ -37,7 +37,6 @@ code{
 }
 
 @font-face {
-  // TODO make this font work
     font-family: bloodyFont;
     src: url(/static/game/BLOODY.ttf) format('truetype'),
 }

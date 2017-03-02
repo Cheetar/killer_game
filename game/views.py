@@ -1,3 +1,4 @@
+from datetime import datetime
 from random import shuffle
 
 from django.contrib.auth import logout as django_logout
@@ -14,9 +15,36 @@ from game.models import Game, Kill, Player, UserForm
 from initialize import add_player
 
 
+def redirect_to_statistics_after_game_finish(view):
+    def updated_view(*args, **kwargs):
+        try:
+            player = request.user.player
+        except:
+            player = False
+        game = Game.objects.get(pk=1)
+        request = args[0]
+        if timezone.now() > game.end_date:
+            return render(request, 'game/game_finished.html',
+                          {'player': player})
+        return view(*args, **kwargs)
+    return updated_view
+
+
+def redirect_to_profile_if_logged(view):
+    def updated_view(*args, **kwargs):
+        request = args[0]
+        player = False
+        if not request.user.is_anonymous() and request.user.is_authenticated() and not request.user.is_staff:
+            player = Player.objects.get(user=request.user)
+            return redirect('game:profile', player.signature)
+        return view(*args, **kwargs)
+    return updated_view
+
+
+#@redirect_to_profile_if_logged
+@redirect_to_statistics_after_game_finish
 def index(request):
-    # TODO FRONTEND, countdown if game haven't started yet
-    # hasn't started yet
+    # TODO FRONTEND, countdown if game hasn't started yet
 
     # If you are logged in you are redirected to profile
     player = False
@@ -56,6 +84,7 @@ def logout(request):
 
 
 @csrf_exempt  # TODO find out how to insert csrf tag
+@redirect_to_statistics_after_game_finish
 def signup(request):
     if request.user.is_authenticated():
         return redirect('game:index')
@@ -130,11 +159,13 @@ def profile(request, signature):
                   {"player": player, "kills": kills})
 
 
+@redirect_to_statistics_after_game_finish
 def profile_qr(request, signature):
     player = get_object_or_404(Player, signature=signature)
     return render(request, 'game/profile_qr.html', {"player": player})
 
 
+@redirect_to_statistics_after_game_finish
 def kill(request, kill_signature):
     """ User can acces this view only by scanning QR code of the victim or by
         manually inserting killing signature
@@ -167,10 +198,20 @@ def kill(request, kill_signature):
     kill = Kill(killer=killer, victim=victim, kill_time=timezone.now())
     kill.save()
 
+    """ Check if there are two alive players left, if yes, change game
+        end datetime to now
+    """
+    if len(Player.objects.filter(alive=True)) <= 2:
+        game = Game.objects.get(pk=1)
+        game.end_date = timezone.now()
+        game.save()
+
+    # TODO replace polish chars with latin to get nice prinbting of blood font
     return render(request, 'game/kill.html',
-                  {"victim": victim, "killer": killer})
+                  {"victim": victim, "killer": killer, 'player': player})
 
 
+@redirect_to_statistics_after_game_finish
 def manual_kill(request):
     try:
         player = request.user.player
