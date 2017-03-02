@@ -37,12 +37,14 @@ code{
 }
 
 @font-face {
-    font-family: bloodyFont;
-    src: url(/static/game/BLOODY.ttf) format('truetype'),
-}
+  font-family: 'bloodyFont';
+  font-style: normal;
+  font-weight: 400;
+  src: url(/static/game/BLOODY.ttf) format('truetype');
+  }
 
 #bloody-congratz{
-  font-family: bloodyFont;
+  font-family: "bloodyFont";
   color: red;
 }
 

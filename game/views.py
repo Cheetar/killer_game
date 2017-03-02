@@ -3,7 +3,7 @@ from random import shuffle
 
 from django.contrib.auth import logout as django_logout
 from django.contrib.auth import authenticate, login
-from django.http import HttpResponse
+from django.http import Http404, HttpResponse
 from django.shortcuts import (get_object_or_404, redirect, render,
                               render_to_response)
 from django.template import RequestContext
@@ -15,44 +15,47 @@ from game.models import Game, Kill, Player, UserForm
 from initialize import add_player
 
 
-def redirect_to_statistics_after_game_finish(view):
-    def updated_view(*args, **kwargs):
-        try:
-            player = request.user.player
-        except:
-            player = False
-        game = Game.objects.get(pk=1)
-        request = args[0]
-        if timezone.now() > game.end_date:
-            return render(request, 'game/game_finished.html',
-                          {'player': player})
-        return view(*args, **kwargs)
-    return updated_view
-
-
-def redirect_to_profile_if_logged(view):
-    def updated_view(*args, **kwargs):
-        request = args[0]
+def get_player(request):
+    try:
+        player = request.user.player
+    except:
         player = False
-        if not request.user.is_anonymous() and request.user.is_authenticated() and not request.user.is_staff:
-            player = Player.objects.get(user=request.user)
-            return redirect('game:profile', player.signature)
-        return view(*args, **kwargs)
-    return updated_view
+    return player
 
 
-#@redirect_to_profile_if_logged
-@redirect_to_statistics_after_game_finish
 def index(request):
-    # TODO FRONTEND, countdown if game hasn't started yet
+    # Check if it's before, during, or after game
+    game = Game.objects.get(pk=1)
+    game_ended = False
+    gamed_started = False
+    now = timezone.now()
+    if now > game.end_date:
+        game_ended = True
+    if now > game.start_date:
+        gamed_started = True
 
-    # If you are logged in you are redirected to profile
+    # Check if user is logged in
     player = False
     if not request.user.is_anonymous() and request.user.is_authenticated() and not request.user.is_staff:
         player = Player.objects.get(user=request.user)
-        return redirect('game:profile', player.signature)
-    return render(request, 'game/index.html',
-                  {'player': player})
+
+    if game_ended:
+        return redirect('game:statistics')
+
+    if player:
+        if not gamed_started:
+            return render(request, 'game/countdown.html', {'player': player})
+        elif not game_ended:
+            return redirect('game:profile', player.signature)
+        else:
+            raise Http404
+    else:
+        if not gamed_started:
+            return render(request, 'game/index.html', {'player': player})
+        elif not game_ended:
+            return render(request, 'game/dashboard.html', {'player': player})
+        else:
+            raise Http404
 
 
 def login_user(request):
@@ -60,6 +63,7 @@ def login_user(request):
     if request.user.is_authenticated():
         return redirect('game:index')
 
+    # Manage logging in
     username = request.POST.get('username', False)
     password = request.POST.get('password', False)
     # If user hadn't attempted to login don't show that credentials are invalid
@@ -84,11 +88,13 @@ def logout(request):
 
 
 @csrf_exempt  # TODO find out how to insert csrf tag
-@redirect_to_statistics_after_game_finish
 def signup(request):
-    if request.user.is_authenticated():
+    # If game has started or you have an account, you can't create an account
+    game = Game.objects.get(pk=1)
+    if timezone.now() > game.start_date or request.user.is_authenticated():
         return redirect('game:index')
 
+    # Manage signup process
     if request.method == 'POST':
         uf = UserForm(request.POST, prefix='user')
         if uf.is_valid():
@@ -110,18 +116,12 @@ def signup(request):
 
 
 def rules(request):
-    try:
-        player = request.user.player
-    except:
-        player = False
+    player = get_player(request)
     return render(request, 'game/rules.html', {'player': player})
 
 
 def living(request):
-    try:
-        player = request.user.player
-    except:
-        player = False
+    player = get_player(request)
 
     # Get all alive players
     living = list(Player.objects.filter(alive=True))
@@ -134,10 +134,7 @@ def living(request):
 
 
 def deathnote(request):
-    try:
-        player = request.user.player
-    except:
-        player = False
+    player = get_player(request)
 
     # Add a note
     note = request.POST.get("note", False)
@@ -155,25 +152,28 @@ def profile(request, signature):
     # If invalid signature show 404
     player = get_object_or_404(Player, signature=signature)
     kills = Kill.objects.filter(killer=player)
+    game = Game.objects.get(pk=1)
+    game_ended = False
+    if timezone.now() > game.end_date:
+        game_ended = True
     return render(request, 'game/profile.html',
-                  {"player": player, "kills": kills})
+                  {"player": player, "kills": kills, 'game_ended': game_ended})
 
 
-@redirect_to_statistics_after_game_finish
 def profile_qr(request, signature):
     player = get_object_or_404(Player, signature=signature)
     return render(request, 'game/profile_qr.html', {"player": player})
 
 
-@redirect_to_statistics_after_game_finish
 def kill(request, kill_signature):
     """ User can acces this view only by scanning QR code of the victim or by
         manually inserting killing signature
     """
-    try:
-        player = request.user.player
-    except:
-        player = False
+    game = Game.objects.get(pk=1)
+    if timezone.now() > game.end_date:
+        return redirect('game:index')
+
+    player = get_player(request)
 
     victim = get_object_or_404(Player, kill_signature=kill_signature)
     # If victim is already killed
@@ -211,14 +211,26 @@ def kill(request, kill_signature):
                   {"victim": victim, "killer": killer, 'player': player})
 
 
-@redirect_to_statistics_after_game_finish
 def manual_kill(request):
-    try:
-        player = request.user.player
-    except:
-        player = False
+    # If game has ended or hasn't started, redirect to index
+    game = Game.objects.get(pk=1)
+    if timezone.now() > game.end_date or timezone.now() < game.start_date:
+        return redirect('game:index')
+
+    player = get_player(request)
 
     kill_signature = request.POST.get("kill_signature", False)
     if kill_signature:
         return redirect('game:kill', kill_signature)
     return render(request, 'game/manual_kill.html', {'player': player})
+
+
+def statistics(request):
+    player = get_player(request)
+
+    # If game hasn't ended yet, redirect to index
+    game = Game.objects.get(pk=1)
+    if timezone.now() < game.end_date:
+        redirect('game:index')
+
+    return render(request, 'game/statistics.html', {'player': player})

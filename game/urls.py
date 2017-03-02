@@ -27,4 +27,6 @@ urlpatterns = [
     url(r'^kill/(?P<kill_signature>[0-9a-f]+)/$', views.kill, name='kill'),
     # ex: /kill/
     url(r'^kill/$', views.manual_kill, name='manual_kill'),
+    # ex: /finished/
+    url(r'^statistics/$', views.statistics, name='statistics')
 ]

@@ -6,8 +6,8 @@
   {% if not player.alive %}
     <p>Specify the way you were killed:</p>
     <form action="{% url 'game:deathnote' %}" method="post"> {% csrf_token %}
-    <textarea name='note' cols="40" rows="5">{% if player.death_note %} {{player.death_note}} {% endif%}</textarea>
-    <input type="submit" value="Submit">
+    <textarea name='note' cols="40" rows="5">{% if player.death_note %} {{player.death_note}} {% endif%}</textarea><br/>
+    <input type="submit" value="Submit"><br/><br/>
     </form>
   {% endif %}
 
@@ -20,9 +20,13 @@
     {% endfor %}
     </ul>
   {% endif %}
-
-  {% if player.alive %}
-    <p>Your target: <b>{{player.current_target}}</b></p>
-    <a href="{% url 'game:profile_qr' player.signature %}"><button type="button" class="btn btn-danger"><b>Got killed</b></button></a>
+  {% if not game_ended %}
+    {% if player.alive %}
+      <p>Your target: <b>{{player.current_target}}</b></p>
+      <a href="{% url 'game:profile_qr' player.signature %}"><button type="button" class="btn btn-danger"><b>Got killed</b></button></a>
+    {% endif %}
+  {% else %}
+    <br/>
+    <p><a href="{% url 'game:statistics' %}">statistics</a></p>
   {% endif %}
 {% endblock data %}

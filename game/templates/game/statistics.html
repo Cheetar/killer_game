@@ -1,0 +1,10 @@
+{% extends "game/base.html" %}
+
+{% block title %}Game finished{% endblock title %}
+
+{% block content %}
+  <h1>The game has finished</h1>
+  {% if player %}
+    <p><a href="{% url 'game:profile' signature=player.signature %}">Profile</a></p>
+  {% endif %}
+{% endblock content %}

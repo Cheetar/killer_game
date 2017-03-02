@@ -10,7 +10,6 @@ from game.models import Game, Player
 
 
 # TODO initialize the game after game started (probably via cron)
-# TODO end the game after game end / if there are only two players alive
 
 def generate_targets():
     """ Make list of all players in random order. Each player have to kill
