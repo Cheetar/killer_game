@@ -1,3 +1,5 @@
+# -*- coding: UTF8 -*-
+
 from datetime import datetime
 from random import shuffle
 
@@ -166,6 +168,10 @@ def profile_qr(request, signature):
 
 
 def kill(request, kill_signature):
+    def replace_polish_chars(s):
+        s = s.replace('ę', 'e').replace('ó', 'o').replace('ą', 'a').replace('ś', 's').replace(
+            'ł', 'l').replace('ż', 'z').replace('ź', 'z').replace('ć', 'c').replace('ń', 'n')
+        return s
     """ User can acces this view only by scanning QR code of the victim or by
         manually inserting killing signature
     """
@@ -206,9 +212,8 @@ def kill(request, kill_signature):
         game.end_date = timezone.now()
         game.save()
 
-    # TODO replace polish chars with latin to get nice prinbting of blood font
     return render(request, 'game/kill.html',
-                  {"victim": victim, "killer": killer, 'player': player})
+                  {"victim": replace_polish_chars(str(victim)), "killer": replace_polish_chars(str(killer)), 'player': player})
 
 
 def manual_kill(request):
