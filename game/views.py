@@ -57,6 +57,7 @@ def index(request):
             players = sorted(players, key=str)
             players = sorted(players, key=lambda player: -player.kills)
 
+            # TODO show something instead of nothing if there is no data
             return render(request, 'game/dashboard.html', {'player': player})
         else:
             raise Http404
@@ -120,6 +121,7 @@ def signup(request):
 
 
 def rules(request):
+    # TODO write down rules
     player = get_player(request)
     return render(request, 'game/rules.html', {'player': player})
 
@@ -170,6 +172,7 @@ def profile_qr(request, signature):
 
 
 def kill(request, kill_signature):
+    # TODO fix the bug that happens if the player passes invalid kill signature
     def replace_polish_chars(s):
         s = s.replace('ę', 'e').replace('ó', 'o').replace('ą', 'a').replace('ś', 's').replace(
             'ł', 'l').replace('ż', 'z').replace('ź', 'z').replace('ć', 'c').replace('ń', 'n')

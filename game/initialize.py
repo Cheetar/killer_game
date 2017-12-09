@@ -8,6 +8,7 @@ from game.models import Game, Player
 
 
 # TODO initialize the game after game started (probably via cron)
+# TODO make feature to review players before adding them as players
 
 def generate_targets():
     """ Make list of all players in random order. Each player have to kill

@@ -22,6 +22,7 @@ MEDIA_ROOT = "/home/cheetar/killer_game/media/"
 # See https://docs.djangoproject.com/en/1.10/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
+# TODO make secret things secret
 SECRET_KEY = 'fox2%u1*pt$cy0ef*@l5htsp%%i)23vhugdeqqogoqgv3o63iw'
 
 # SECURITY WARNING: don't run with debug turned on in production!
