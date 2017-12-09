@@ -1,5 +1,6 @@
 # -*- coding: UTF8 -*-
 
+import calendar
 from datetime import datetime
 from random import shuffle
 
@@ -46,7 +47,8 @@ def index(request):
 
     if player:
         if not gamed_started:
-            return render(request, 'game/countdown.html', {'player': player})
+            timestamp = calendar.timegm(game.start_date.utctimetuple())
+            return render(request, 'game/countdown.html', {'player': player, 'game_start_date': timestamp})
         elif not game_ended:
             return redirect('game:profile', player.signature)
         else:
@@ -55,6 +57,14 @@ def index(request):
         if not gamed_started:
             return render(request, 'game/index.html', {'player': player})
         elif not game_ended:
+            players = list(Player.objects.all())
+            players = sorted(players, key=str)
+            players = sorted(players, key=lambda player: -player.kills)
+            if players[0].kills == 0:
+                best_killer = False
+            else:
+                pass
+
             return render(request, 'game/dashboard.html', {'player': player})
         else:
             raise Http404

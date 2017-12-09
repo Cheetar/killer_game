@@ -1,30 +1,69 @@
-{% extends "game/base.html" %}
-
-{% load static %}
+{% extends 'game/base.html' %}
 
 {% block title %}Countdown{% endblock title %}
 
 {% block content %}
-  <script type='javasript'>
-  $('#clock').countdown('2020/10/10 12:34:56')
-  .on('update.countdown', function(event) {
-    var format = '%H:%M:%S';
-    if(event.offset.totalDays > 0) {
-      format = '%-d day%!d ' + format;
-    }
-    if(event.offset.weeks > 0) {
-      format = '%-w week%!w ' + format;
-    }
-    $(this).html(event.strftime(format));
-  })
-  .on('finish.countdown', function(event) {
-    $(this).html('This offer has expired!')
-      .parent().addClass('disabled');
+  <script type='text/javascript'>
 
-  });
+  setInterval( function ( ) {
+
+    var Text = "";
+    var Time = Math.floor( {{ game_start_date }} - ( Date.now() / 1000 ) );
+
+    if ( Time < 0 ) {
+
+      window.location.href = "{% url 'game:index' %}"; }
+
+    var Days = Math.floor( Time / ( 3600 * 24 ) );
+    var Hours = Math.floor( ( Time - Days * ( 3600 * 24 ) ) / 3600 );
+    var Minutes = Math.floor( ( Time - Days * ( 3600 * 24 ) - Hours * 3600 ) / 60 );
+    var Seconds = Math.floor( ( Time - Days * ( 3600 * 24 ) - Hours * 3600 - Minutes * 60 ) );
+
+    if ( Days > 0 ) {
+
+      if ( Days == 1 ) {
+
+        Text = Text + "1 day "; }
+
+      else {
+
+        Text = Text + Days + " days "; } }
+
+    if ( Hours > 0 || Days > 0 ) {
+
+      if ( Hours == 1 ) {
+
+        Text = Text + "1 hour "; }
+
+      else {
+
+        Text = Text + Hours + " hours "; } }
+
+    if ( Minutes > 0 || Hours > 0 || Days > 0 ) {
+
+      if ( Minutes == 1 ) {
+
+        Text = Text + "1 minute "; }
+
+      else {
+
+        Text = Text + Minutes + " minutes "; } }
+
+    if ( Seconds == 1 ) {
+
+      Text = Text + "1 second"; }
+
+    else {
+
+      Text = Text + Seconds + " seconds"; }
+
+    document.getElementById( "clock" ).innerHTML = Text;
+
+    }, 500 );
+
   </script>
   <div class="countdown">
-  Limited Time Only!
-  <span id="clock"></span>
+    <h1>Game starts in</h1>
+  <b><h1 id="clock"></h1></b>
   </div>
-{% endblock content %}
+{% endblock content%}
