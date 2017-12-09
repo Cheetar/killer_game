@@ -1,6 +1,5 @@
 from __future__ import unicode_literals
 
-import datetime
 import os
 import StringIO
 
@@ -8,10 +7,8 @@ import qrcode
 from django import forms
 from django.contrib.auth.models import User
 from django.core.files.uploadedfile import InMemoryUploadedFile
-from django.core.urlresolvers import reverse
 from django.db import models
 from django.forms import ModelForm
-from django.utils import timezone
 from django.utils.encoding import python_2_unicode_compatible
 
 DOMAIN = "http://localhost:8000/"

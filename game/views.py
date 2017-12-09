@@ -1,18 +1,14 @@
 # -*- coding: UTF8 -*-
 
 import calendar
-from datetime import datetime
-from random import shuffle
 
 from django.contrib.auth import logout as django_logout
 from django.contrib.auth import authenticate, login
-from django.http import Http404, HttpResponse
+from django.http import Http404
 from django.shortcuts import (get_object_or_404, redirect, render,
                               render_to_response)
-from django.template import RequestContext
-from django.urls import reverse
 from django.utils import timezone
-from django.views.decorators.csrf import csrf_exempt, csrf_protect
+from django.views.decorators.csrf import csrf_exempt
 
 from game.models import Game, Kill, Player, UserForm
 from initialize import add_player
@@ -60,10 +56,6 @@ def index(request):
             players = list(Player.objects.all())
             players = sorted(players, key=str)
             players = sorted(players, key=lambda player: -player.kills)
-            if players[0].kills == 0:
-                best_killer = False
-            else:
-                pass
 
             return render(request, 'game/dashboard.html', {'player': player})
         else:
@@ -222,8 +214,10 @@ def kill(request, kill_signature):
         game.end_date = timezone.now()
         game.save()
 
-    return render(request, 'game/kill.html',
-                  {"victim": replace_polish_chars(str(victim)), "killer": replace_polish_chars(str(killer)), 'player': player})
+    return render(request, 'game/kill.html', {
+        "victim": replace_polish_chars(str(victim)),
+        "killer": replace_polish_chars(str(killer)),
+        "player": player})
 
 
 def manual_kill(request):
