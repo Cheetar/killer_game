@@ -22,17 +22,21 @@ def get_player(request):
     return player
 
 
-def index(request):
+def get_game_time_info():
     # Check if it's before, during, or after game
     game = Game.objects.get(pk=1)
     game_ended = False
-    gamed_started = False
+    game_started = False
     now = timezone.now()
     if now > game.end_date:
         game_ended = True
     if now > game.start_date:
-        gamed_started = True
+        game_started = True
+    return game, game_started, game_ended
 
+
+def index(request):
+    game, game_started, game_ended = get_game_time_info()
     # Check if user is logged in
     player = False
     if not request.user.is_anonymous() and request.user.is_authenticated() and not request.user.is_staff:
@@ -42,7 +46,7 @@ def index(request):
         return redirect('game:statistics')
 
     if player:
-        if not gamed_started:
+        if not game_started:
             timestamp = calendar.timegm(game.start_date.utctimetuple())
             return render(request, 'game/countdown.html', {'player': player, 'game_start_date': timestamp})
         elif not game_ended:
@@ -50,7 +54,7 @@ def index(request):
         else:
             raise Http404
     else:
-        if not gamed_started:
+        if not game_started:
             return render(request, 'game/index.html', {'player': player})
         elif not game_ended:
             players = list(Player.objects.all())
