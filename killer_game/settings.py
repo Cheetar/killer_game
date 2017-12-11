@@ -25,7 +25,6 @@ MEDIA_ROOT = config("MEDIA_ROOT")
 # See https://docs.djangoproject.com/en/1.10/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-# TODO make secret things secret
 SECRET_KEY = config("SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!

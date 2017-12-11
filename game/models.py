@@ -114,6 +114,7 @@ class Kill(models.Model):
 
 class UserForm(ModelForm):
     # TODO make double password check
+    # TODO integrate signup with Facebook
     """ This class is used in registration (/signup/). It allows to dynamically
         generate registration form.
     """
