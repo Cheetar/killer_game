@@ -11,25 +11,27 @@ https://docs.djangoproject.com/en/1.10/ref/settings/
 """
 
 import os
+from ast import literal_eval
+
+from decouple import config
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 MEDIA_URL = "/media/"
-MEDIA_ROOT = "/home/cheetar/killer_game/media/"
+MEDIA_ROOT = config("MEDIA_ROOT")
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/1.10/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
 # TODO make secret things secret
-SECRET_KEY = 'fox2%u1*pt$cy0ef*@l5htsp%%i)23vhugdeqqogoqgv3o63iw'
+SECRET_KEY = config("SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = config('DEBUG', default=False, cast=bool)
 
-ALLOWED_HOSTS = []
-
+ALLOWED_HOSTS = config('ALLOWED_HOSTS', cast=lambda v: [s.strip() for s in v.split(',')])
 
 # Application definition
 
@@ -77,16 +79,8 @@ WSGI_APPLICATION = 'killer_game.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/1.10/ref/settings/#databases
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'killer_db',
-        'USER': 'killer_user',
-        'PASSWORD': 'password',
-        'HOST': 'localhost',
-        'PORT': '',
-    }
-}
+DATABASES = literal_eval(config('DATABASES')) or {'default': {
+    'ENGINE': 'django.db.backends.sqlite3', 'NAME': os.path.join(BASE_DIR, 'db.sqlite3'), }}
 
 
 # Password validation
