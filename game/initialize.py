@@ -4,7 +4,7 @@ from random import shuffle
 from django.conf import settings
 from django.contrib.auth.models import User
 
-from game.models import Game, Player
+from game.models import Player
 
 
 # TODO initialize the game after game started (probably via cron)
@@ -25,8 +25,6 @@ def generate_targets():
 def add_player(user):
     player = Player()
     player.user = user
-    player.game = Game.objects.get(pk=1)
-
     player.generate_signatures()
     player.generate_qrcode()
     player.save()

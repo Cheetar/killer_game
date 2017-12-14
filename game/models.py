@@ -14,19 +14,6 @@ from django.utils.encoding import python_2_unicode_compatible
 DOMAIN = "http://localhost:8000/"
 
 
-class Game(models.Model):
-    # TODO find a better way to deal with storing the game start and end
-    """ This class stores only information about the game start and end.
-        Every player is linked to a game.
-    """
-    name = models.CharField(max_length=200, blank=True)
-    start_date = models.DateTimeField('start_date')
-    end_date = models.DateTimeField('end_date')
-
-    def __str__(self):
-        return self.name
-
-
 # Decorator for correct printing of polish letters
 @python_2_unicode_compatible
 class Player(models.Model):
@@ -36,8 +23,6 @@ class Player(models.Model):
     """
     # Link player to an user and to a game
     user = models.OneToOneField(User, on_delete=models.CASCADE)
-    game = models.ForeignKey(Game, on_delete=models.CASCADE)
-
     kills = models.IntegerField(default=0)
     # current_target type is a Player object
     current_target = models.ForeignKey('self', blank=True, null=True)

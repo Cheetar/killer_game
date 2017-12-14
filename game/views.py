@@ -1,7 +1,8 @@
 # -*- coding: UTF8 -*-
 
-import calendar
+import datetime
 
+from decouple import config
 from django.contrib.auth import logout as django_logout
 from django.contrib.auth import authenticate, login
 from django.http import Http404
@@ -10,7 +11,7 @@ from django.shortcuts import (get_object_or_404, redirect, render,
 from django.utils import timezone
 from django.views.decorators.csrf import csrf_exempt
 
-from game.models import Game, Kill, Player, UserForm
+from game.models import Kill, Player, UserForm
 from initialize import add_player
 
 
@@ -22,21 +23,29 @@ def get_player(request):
     return player
 
 
-def get_game_time_info():
-    # Check if it's before, during, or after game
-    game = Game.objects.get(pk=1)
-    game_ended = False
-    game_started = False
-    now = timezone.now()
-    if now > game.end_date:
-        game_ended = True
-    if now > game.start_date:
-        game_started = True
-    return game, game_started, game_ended
+def str_to_datetime(s):
+    return datetime.datetime.strptime(s, '%b %d %Y %I:%M%p')
+
+
+def datetime_to_timestamp(dt):
+    return (dt - datetime.datetime(1970, 1, 1)).total_seconds()
+
+
+def has_game_started():
+    now = datetime.datetime.now()
+    return now > config("game_start", cast=str_to_datetime)
+
+
+def has_game_ended():
+    now = datetime.datetime.now()
+    return (len(Player.objects.filter(alive=True)) <= 2 and has_game_started()) or now > config("game_end", cast=str_to_datetime)
 
 
 def index(request):
-    game, game_started, game_ended = get_game_time_info()
+    game_start = config("game_start", cast=str_to_datetime)
+    game_started = has_game_started()
+    game_ended = has_game_ended()
+
     # Check if user is logged in
     player = False
     if not request.user.is_anonymous() and request.user.is_authenticated() and not request.user.is_staff:
@@ -47,7 +56,7 @@ def index(request):
 
     if player:
         if not game_started:
-            timestamp = calendar.timegm(game.start_date.utctimetuple())
+            timestamp = datetime_to_timestamp(game_start)
             return render(request, 'game/countdown.html', {'player': player, 'game_start_date': timestamp})
         elif not game_ended:
             return redirect('game:profile', player.signature)
@@ -99,8 +108,8 @@ def logout(request):
 @csrf_exempt  # TODO find out how to insert csrf tag
 def signup(request):
     # If game has started or you have an account, you can't create an account
-    game = Game.objects.get(pk=1)
-    if timezone.now() > game.start_date or request.user.is_authenticated():
+    game_started = has_game_started()
+    if game_started or request.user.is_authenticated():
         return redirect('game:index')
 
     # Manage signup process
@@ -162,12 +171,8 @@ def profile(request, signature):
     # If invalid signature show 404
     player = get_object_or_404(Player, signature=signature)
     kills = Kill.objects.filter(killer=player)
-    game = Game.objects.get(pk=1)
-    game_ended = False
-    if timezone.now() > game.end_date:
-        game_ended = True
     return render(request, 'game/profile.html',
-                  {"player": player, "kills": kills, 'game_ended': game_ended})
+                  {"player": player, "kills": kills, 'game_ended': has_game_ended()})
 
 
 def profile_qr(request, signature):
@@ -184,8 +189,7 @@ def kill(request, kill_signature):
     """ User can acces this view only by scanning QR code of the victim or by
         manually inserting killing signature
     """
-    game = Game.objects.get(pk=1)
-    if timezone.now() > game.end_date:
+    if has_game_ended():
         return redirect('game:index')
 
     player = get_player(request)
@@ -213,14 +217,6 @@ def kill(request, kill_signature):
     kill = Kill(killer=killer, victim=victim, kill_time=timezone.now())
     kill.save()
 
-    """ Check if there are two alive players left, if yes, change game
-        end datetime to now
-    """
-    if len(Player.objects.filter(alive=True)) <= 2:
-        game = Game.objects.get(pk=1)
-        game.end_date = timezone.now()
-        game.save()
-
     return render(request, 'game/kill.html', {
         "victim": replace_polish_chars(str(victim)),
         "killer": replace_polish_chars(str(killer)),
@@ -229,8 +225,7 @@ def kill(request, kill_signature):
 
 def manual_kill(request):
     # If game has ended or hasn't started, redirect to index
-    game = Game.objects.get(pk=1)
-    if timezone.now() > game.end_date or timezone.now() < game.start_date:
+    if has_game_ended() or not has_game_started():
         return redirect('game:index')
 
     player = get_player(request)
@@ -244,9 +239,7 @@ def manual_kill(request):
 def statistics(request):
     player = get_player(request)
 
-    # If game hasn't ended yet, redirect to index
-    game = Game.objects.get(pk=1)
-    if timezone.now() < game.end_date:
+    if not has_game_ended():
         redirect('game:index')
 
     return render(request, 'game/statistics.html', {'player': player})
