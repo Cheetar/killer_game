@@ -15,6 +15,9 @@ from game.models import Kill, Player, UserForm
 from initialize import add_player
 
 
+# TODO take timezone into consideration while calculating game start/end
+
+
 def get_player(request):
     try:
         player = request.user.player
