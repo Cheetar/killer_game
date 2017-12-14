@@ -45,6 +45,7 @@ def has_game_ended():
 
 
 def index(request):
+    # TODO handle the situation when a user missed the game start and player profile was not created
     game_start = config("game_start", cast=str_to_datetime)
     game_started = has_game_started()
     game_ended = has_game_ended()
@@ -110,6 +111,7 @@ def logout(request):
 
 @csrf_exempt  # TODO find out how to insert csrf tag
 def signup(request):
+    # TODO feature: disable signup when game starts in e.g. 5 minutes
     # If game has started or you have an account, you can't create an account
     game_started = has_game_started()
     if game_started or request.user.is_authenticated():
