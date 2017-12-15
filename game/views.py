@@ -8,6 +8,7 @@ from django.contrib.auth import authenticate, login
 from django.http import Http404
 from django.shortcuts import (get_object_or_404, redirect, render,
                               render_to_response)
+from django.urls.exceptions import NoReverseMatch
 from django.utils import timezone
 from django.views.decorators.csrf import csrf_exempt
 
@@ -186,7 +187,6 @@ def profile_qr(request, signature):
 
 
 def kill(request, kill_signature):
-    # TODO fix the bug that happens if the player passes invalid kill signature
     def replace_polish_chars(s):
         s = s.replace('ę', 'e').replace('ó', 'o').replace('ą', 'a').replace('ś', 's').replace(
             'ł', 'l').replace('ż', 'z').replace('ź', 'z').replace('ć', 'c').replace('ń', 'n')
@@ -237,7 +237,10 @@ def manual_kill(request):
 
     kill_signature = request.POST.get("kill_signature", False)
     if kill_signature:
-        return redirect('game:kill', kill_signature)
+        try:
+            return redirect('game:kill', kill_signature)
+        except NoReverseMatch:
+            return render(request, 'game/invalid_kill_signature.html')
     return render(request, 'game/manual_kill.html', {'player': player})
 
 

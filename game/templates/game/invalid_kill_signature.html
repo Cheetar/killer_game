@@ -1,0 +1,8 @@
+{% extends "game/base.html" %}
+
+{% block title %}Invalid kill signature{% endblock title %}
+
+{% block content %}
+<meta http-equiv="refresh" content="5;{% url 'game:manual_kill' %}" />
+<h1>Invalid kill signature!!!</h1>
+{% endblock content %}
