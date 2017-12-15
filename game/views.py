@@ -45,6 +45,29 @@ def has_game_ended():
     return (len(Player.objects.filter(alive=True)) <= 2 and has_game_started()) or now > config("game_end", cast=str_to_datetime)
 
 
+def get_best_killer():
+    players = list(Player.objects.all())
+    players = sorted(players, key=str)
+    players = sorted(players, key=lambda player: -player.kills)
+    return players[0]
+
+
+def get_last_deathnote():
+    players_with_valid_deathnote = Player.objects.filter(alive=False).exclude(death_note=None).order_by('death_time')
+    if players_with_valid_deathnote:
+        return players_with_valid_deathnote[0].death_note
+    else:
+        None
+
+
+def get_last_kill():
+    kills = Kill.objects.order_by('kill_time')
+    if kills:
+        return kills[0]
+    else:
+        None
+
+
 def index(request):
     # TODO handle the situation when a user missed the game start and player profile was not created
     game_start = config("game_start", cast=str_to_datetime)
@@ -71,12 +94,9 @@ def index(request):
         if not game_started:
             return render(request, 'game/index.html', {'player': player})
         elif not game_ended:
-            players = list(Player.objects.all())
-            players = sorted(players, key=str)
-            players = sorted(players, key=lambda player: -player.kills)
-
-            # TODO show something instead of nothing if there is no data
-            return render(request, 'game/dashboard.html', {'player': player})
+            return render(request, 'game/dashboard.html', {'best_killer': get_best_killer(),
+                                                           'last_note': get_last_deathnote(),
+                                                           'last_kill': get_last_kill()})
         else:
             raise Http404
 

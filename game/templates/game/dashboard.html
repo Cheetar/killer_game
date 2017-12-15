@@ -3,7 +3,10 @@
 {% block title %}Dashboard{% endblock title %}
 
 {% block data %}
-  <p>Last kill: {{last_kill}}</p>
-  <p>Most kills: {{best_killer}}</p>
-  <p>Last death note: {{last_note}}</p>
+  {% if not last_kill and not best_killer and not last_note %}
+    <p><b>The game has started!</b></p>
+  {% endif %}
+  {% if last_kill %}<p>Last kill: <b>{{last_kill.kill_time}}</b></p>{% endif %}
+  {% if best_killer %}<p>Most kills: <b>{{best_killer}}</b></p>{% endif %}
+  {% if last_note %}<p>Last death note: <b>{{last_note}}</b></p>{% endif %}
 {% endblock data %}
