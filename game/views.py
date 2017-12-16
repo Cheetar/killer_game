@@ -20,12 +20,11 @@ from initialize import add_player
 
 
 def get_player(request):
-    player = False
     if not request.user.is_anonymous() and request.user.is_authenticated() and not request.user.is_staff:
         try:
             player = Player.objects.get(user=request.user)
         except ObjectDoesNotExist:
-            pass
+            player = False
     return player
 
 
@@ -120,7 +119,6 @@ def logout(request):
 
 @csrf_exempt  # TODO find out how to insert csrf tag
 def signup(request):
-    # TODO feature: disable signup when game starts in e.g. 5 minutes
     # If game has started or you have an account, you can't create an account
     game_started = has_game_started()
     if game_started or request.user.is_authenticated():
