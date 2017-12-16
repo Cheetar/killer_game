@@ -6,7 +6,6 @@ from decouple import config
 from django.contrib.auth import logout as django_logout
 from django.contrib.auth import authenticate, login
 from django.core.exceptions import ObjectDoesNotExist
-from django.http import Http404
 from django.shortcuts import (get_object_or_404, redirect, render,
                               render_to_response)
 from django.urls.exceptions import NoReverseMatch
@@ -21,10 +20,12 @@ from initialize import add_player
 
 
 def get_player(request):
-    try:
-        player = request.user.player
-    except:
-        player = False
+    player = False
+    if not request.user.is_anonymous() and request.user.is_authenticated() and not request.user.is_staff:
+        try:
+            player = Player.objects.get(user=request.user)
+        except ObjectDoesNotExist:
+            pass
     return player
 
 
@@ -50,37 +51,24 @@ def get_best_killer():
     players = list(Player.objects.all())
     players = sorted(players, key=str)
     players = sorted(players, key=lambda player: -player.kills)
-    return players[0]
+    return players.first()
 
 
 def get_last_deathnote():
     players_with_valid_deathnote = Player.objects.filter(alive=False).exclude(death_note=None).order_by('death_time')
-    if players_with_valid_deathnote:
-        return players_with_valid_deathnote[0].death_note
-    else:
-        None
+    return players_with_valid_deathnote.first().death_note
 
 
 def get_last_kill():
     kills = Kill.objects.order_by('kill_time')
-    if kills:
-        return kills[0]
-    else:
-        None
+    return kills.first()
 
 
 def index(request):
     game_start = config("game_start", cast=str_to_datetime)
     game_started = has_game_started()
     game_ended = has_game_ended()
-
-    # Check if user is logged in
-    player = False
-    if not request.user.is_anonymous() and request.user.is_authenticated() and not request.user.is_staff:
-        try:
-            player = Player.objects.get(user=request.user)
-        except ObjectDoesNotExist:
-            player = None
+    player = get_player(request)
 
     if game_ended:
         return redirect('game:statistics')
@@ -89,19 +77,16 @@ def index(request):
         if not game_started:
             timestamp = datetime_to_timestamp(game_start)
             return render(request, 'game/countdown.html', {'player': player, 'game_start_date': timestamp})
-        elif not game_ended:
-            return redirect('game:profile', player.signature)
         else:
-            raise Http404
+            return redirect('game:profile', player.signature)
+
     else:
         if not game_started:
             return render(request, 'game/index.html', {'player': player})
-        elif not game_ended:
+        else:
             return render(request, 'game/dashboard.html', {'best_killer': get_best_killer(),
                                                            'last_note': get_last_deathnote(),
                                                            'last_kill': get_last_kill()})
-        else:
-            raise Http404
 
 
 def login_user(request):
