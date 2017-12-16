@@ -5,6 +5,7 @@ import datetime
 from decouple import config
 from django.contrib.auth import logout as django_logout
 from django.contrib.auth import authenticate, login
+from django.core.exceptions import ObjectDoesNotExist
 from django.http import Http404
 from django.shortcuts import (get_object_or_404, redirect, render,
                               render_to_response)
@@ -69,7 +70,6 @@ def get_last_kill():
 
 
 def index(request):
-    # TODO handle the situation when a user missed the game start and player profile was not created
     game_start = config("game_start", cast=str_to_datetime)
     game_started = has_game_started()
     game_ended = has_game_ended()
@@ -77,7 +77,10 @@ def index(request):
     # Check if user is logged in
     player = False
     if not request.user.is_anonymous() and request.user.is_authenticated() and not request.user.is_staff:
-        player = Player.objects.get(user=request.user)
+        try:
+            player = Player.objects.get(user=request.user)
+        except ObjectDoesNotExist:
+            player = None
 
     if game_ended:
         return redirect('game:statistics')
