@@ -30,7 +30,7 @@ def get_player(request):
 
 
 def str_to_datetime(s):
-    return datetime.datetime.strptime(s, '%b %d %Y %I:%M%p')
+    return datetime.datetime.strptime(s, '%b %d %Y %H:%M')
 
 
 def datetime_to_timestamp(dt):
