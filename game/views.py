@@ -20,11 +20,12 @@ from initialize import add_player
 
 
 def get_player(request):
+    player = False
     if not request.user.is_anonymous() and request.user.is_authenticated() and not request.user.is_staff:
         try:
             player = Player.objects.get(user=request.user)
         except ObjectDoesNotExist:
-            player = False
+            pass
     return player
 
 
@@ -43,14 +44,14 @@ def has_game_started():
 
 def has_game_ended():
     now = datetime.datetime.now()
-    return (len(Player.objects.filter(alive=True)) <= 2 and has_game_started()) or now > config("game_end", cast=str_to_datetime)
+    no_alive_player = len(Player.objects.filter(alive=True))
+    game_end = config("game_end", cast=str_to_datetime)
+    return (has_game_started() and no_alive_player <= 2) or now > game_end
 
 
 def get_best_killer():
-    players = list(Player.objects.all())
-    players = sorted(players, key=str)
-    players = sorted(players, key=lambda player: -player.kills)
-    return players.first()
+    # Returns the player that have most kills and is alphabetically first
+    return Player.objects.all().order_by('str').order_by('-kills').first()
 
 
 def get_last_deathnote():
@@ -72,13 +73,16 @@ def index(request):
     if game_ended:
         return redirect('game:statistics')
 
-    if player:
+    if request.user.is_authenticated():
         if not game_started:
             timestamp = datetime_to_timestamp(game_start)
             return render(request, 'game/countdown.html', {'player': player, 'game_start_date': timestamp})
-        else:
+        elif player:
             return redirect('game:profile', player.signature)
-
+        else:
+            return render(request, 'game/dashboard.html', {'best_killer': get_best_killer(),
+                                                           'last_note': get_last_deathnote(),
+                                                           'last_kill': get_last_kill()})
     else:
         if not game_started:
             return render(request, 'game/index.html', {'player': player})
