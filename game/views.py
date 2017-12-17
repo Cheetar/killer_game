@@ -66,8 +66,11 @@ def get_best_killer():
 
 
 def get_last_deathnote():
-    players_with_valid_deathnote = Player.objects.filter(alive=False).exclude(death_note=None).order_by('death_time')
-    return players_with_valid_deathnote.first().death_note
+    note = None
+    player = Player.objects.filter(alive=False).exclude(death_note=None).order_by('death_time').first()
+    if player:
+        note = player.death_note
+    return note
 
 
 def get_last_kill():
