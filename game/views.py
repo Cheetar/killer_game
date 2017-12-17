@@ -2,6 +2,7 @@
 
 import datetime
 
+from dateutil import parser
 from decouple import config
 from django.contrib.auth import logout as django_logout
 from django.contrib.auth import authenticate, login
@@ -16,9 +17,6 @@ from game.models import Kill, Player, UserForm
 from initialize import add_player
 
 
-# TODO take timezone into consideration while calculating game start/end
-
-
 def get_player(request):
     player = False
     if not request.user.is_anonymous() and request.user.is_authenticated() and not request.user.is_staff:
@@ -29,8 +27,12 @@ def get_player(request):
     return player
 
 
-def str_to_datetime(s):
-    return datetime.datetime.strptime(s, '%b %d %Y %H:%M')
+def get_game_start():
+    return parser.parse(config("game_start", cast=str))
+
+
+def get_game_end():
+    return parser.parse(config("game_end", cast=str))
 
 
 def datetime_to_timestamp(dt):
@@ -39,13 +41,14 @@ def datetime_to_timestamp(dt):
 
 def has_game_started():
     now = datetime.datetime.now()
-    return now > config("game_start", cast=str_to_datetime)
+    game_start = get_game_start()
+    return now > game_start
 
 
 def has_game_ended():
     now = datetime.datetime.now()
+    game_end = get_game_end()
     no_alive_player = len(Player.objects.filter(alive=True))
-    game_end = config("game_end", cast=str_to_datetime)
     return (has_game_started() and no_alive_player <= 2) or now > game_end
 
 
@@ -65,7 +68,7 @@ def get_last_kill():
 
 
 def index(request):
-    game_start = config("game_start", cast=str_to_datetime)
+    game_start = get_game_start()
     game_started = has_game_started()
     game_ended = has_game_ended()
     player = get_player(request)
