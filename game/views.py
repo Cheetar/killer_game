@@ -2,6 +2,7 @@
 
 import datetime
 import time
+from os import path, system
 
 from dateutil import parser
 from decouple import config
@@ -15,10 +16,16 @@ from django.utils import timezone
 from django.views.decorators.csrf import csrf_exempt
 
 from game.models import Kill, Player, UserForm
-from initialize import add_player
+from initialize import add_player, restart_players
 
 
 def get_player(request):
+    # Create player profiles if game has started and it hadn't been done yet
+    if (not path.isfile(".initialized") and has_game_started()):
+        restart_players()
+        system("touch .initialized")
+        time.sleep(2)
+
     player = False
     if not request.user.is_anonymous() and request.user.is_authenticated() and not request.user.is_staff:
         try:

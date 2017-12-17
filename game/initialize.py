@@ -7,7 +7,6 @@ from django.contrib.auth.models import User
 from game.models import Player
 
 
-# TODO initialize the game after game started (probably via cron)
 # TODO make feature to review players before adding them as players
 
 def generate_targets():
