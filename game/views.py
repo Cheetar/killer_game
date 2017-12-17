@@ -1,6 +1,7 @@
 # -*- coding: UTF8 -*-
 
 import datetime
+import time
 
 from dateutil import parser
 from decouple import config
@@ -36,7 +37,7 @@ def get_game_end():
 
 
 def datetime_to_timestamp(dt):
-    return (dt - datetime.datetime(1970, 1, 1)).total_seconds()
+    return time.mktime(dt.timetuple())
 
 
 def has_game_started():
