@@ -206,6 +206,7 @@ def profile(request, signature):
 
 
 def profile_qr(request, signature):
+    # TODO make 404 page
     player = get_object_or_404(Player, signature=signature)
     return render(request, 'game/profile_qr.html', {"player": player})
 
