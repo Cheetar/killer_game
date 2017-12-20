@@ -227,9 +227,7 @@ def kill(request, kill_signature):
     victim = get_object_or_404(Player, kill_signature=kill_signature)
     # If victim is already killed
     if not victim.alive:
-        return render(request, 'game/already_killed.html',
-
-                      {'dead_player': victim, 'player': player})
+        return render(request, 'game/already_killed.html', {'dead_player': victim, 'player': player})
     killer = Player.objects.get(current_target=victim)
 
     # Update killer's status

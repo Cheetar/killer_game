@@ -4,3 +4,4 @@
 /.initialized
 /db.sqlite3
 /TODOs.txt
+/geckodriver.log
