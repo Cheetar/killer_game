@@ -8,11 +8,9 @@ from django.conf import settings
 from django.contrib.auth import logout as django_logout
 from django.contrib.auth import authenticate, login
 from django.core.exceptions import ObjectDoesNotExist
-from django.shortcuts import (get_object_or_404, redirect, render,
-                              render_to_response)
+from django.shortcuts import get_object_or_404, redirect, render
 from django.urls.exceptions import NoReverseMatch
 from django.utils import timezone
-from django.views.decorators.csrf import csrf_exempt
 
 from game.models import Kill, Player, UserForm
 from initialize import add_player, restart_players
