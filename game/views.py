@@ -4,8 +4,7 @@ import datetime
 import time
 from os import path, system
 
-from dateutil import parser
-from decouple import config
+from django.conf import settings
 from django.contrib.auth import logout as django_logout
 from django.contrib.auth import authenticate, login
 from django.core.exceptions import ObjectDoesNotExist
@@ -36,11 +35,11 @@ def get_player(request):
 
 
 def get_game_start():
-    return parser.parse(config("game_start", cast=str))
+    return settings.GAME_START
 
 
 def get_game_end():
-    return parser.parse(config("game_end", cast=str))
+    return settings.GAME_END
 
 
 def datetime_to_timestamp(dt):

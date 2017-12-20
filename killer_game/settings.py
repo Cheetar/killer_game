@@ -13,6 +13,7 @@ https://docs.djangoproject.com/en/1.10/ref/settings/
 import os
 from ast import literal_eval
 
+from dateutil import parser
 from decouple import config
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
@@ -131,3 +132,6 @@ SECURE_SSL_REDIRECT = config("SECURE_SSL_REDIRECT", cast=bool, default=True)
 SECURE_BROWSER_XSS_FILTER = True
 SECURE_HSTS_SECONDS = 300
 SECURE_HSTS_INCLUDE_SUBDOMAINS = True
+
+GAME_START = parser.parse(config("game_start", cast=str))
+GAME_END = parser.parse(config("game_end", cast=str))
