@@ -134,7 +134,6 @@ def logout(request):
     return redirect('game:index')
 
 
-@csrf_exempt  # TODO find out how to insert csrf tag
 def signup(request):
     # If game has started or you have an account, you can't create an account
     game_started = has_game_started()
@@ -159,7 +158,7 @@ def signup(request):
                           {"username": user.username, 'player': user.player})
     else:
         uf = UserForm(prefix='user')
-    return render_to_response('game/signup.html', dict(userform=uf))
+    return render(request, 'game/signup.html', dict(userform=uf))
 
 
 def rules(request):
