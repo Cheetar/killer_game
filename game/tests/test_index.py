@@ -49,4 +49,4 @@ class TimeIndex(TestCase):
         response = self.client.get(url, follow=True)
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'game/statistics.html')
-        self.assertContains(response, 'game has finished')
+        self.assertContains(response, 'Game finished')

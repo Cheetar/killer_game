@@ -10,5 +10,7 @@
       <li><b>{{survivor}}</b> ({{survivor.kills}} {% if best_killer.kills == 1%}kill{% else %}kills{%endif%})</li>
     {%endfor%}
   </ul>
+  {% if player %}
   <p><a id='back' href="{% url 'game:profile' player.signature %}"><code>&lt;profile&gt;</code></a></p>
+  {% endif %}
 {% endblock data %}
