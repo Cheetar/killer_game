@@ -164,7 +164,6 @@ def signup(request):
 
 
 def rules(request):
-    # TODO write down rules
     player = get_player(request)
     return render(request, 'game/rules.html', {'player': player})
 
@@ -206,7 +205,6 @@ def profile(request, signature):
 
 
 def profile_qr(request, signature):
-    # TODO make 404 page
     player = get_object_or_404(Player, signature=signature)
     return render(request, 'game/profile_qr.html', {"player": player})
 

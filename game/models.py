@@ -17,7 +17,6 @@ DOMAIN = "http://localhost:8000/"
 # Decorator for correct printing of polish letters
 @python_2_unicode_compatible
 class Player(models.Model):
-    # TODO add portrait
     """ Player class is intended to store all the data about the user that
         concerns the game e.g. number of kills, target to kill
     """
@@ -98,8 +97,6 @@ class Kill(models.Model):
 
 
 class UserForm(ModelForm):
-    # TODO make double password check
-    # TODO integrate signup with Facebook
     """ This class is used in registration (/signup/). It allows to dynamically
         generate registration form.
     """

@@ -7,8 +7,6 @@ from django.contrib.auth.models import User
 from game.models import Player
 
 
-# TODO make feature to review players before adding them as players
-
 def generate_targets():
     """ Make list of all players in random order. Each player have to kill
         the next player on the list. This ensures that the kill chain is a
