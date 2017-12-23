@@ -1,10 +1,14 @@
-{% extends "game/base.html" %}
+{% extends "game/base_subpage.html" %}
 
 {% block title %}Game finished{% endblock title %}
 
-{% block content %}
-  <h1>The game has finished</h1>
-  {% if player %}
-    <p><a href="{% url 'game:profile' signature=player.signature %}">Profile</a></p>
-  {% endif %}
-{% endblock content %}
+{% block data %}
+  <p>Most kills: <b>{{best_killer}}</b> ({{best_killer.kills}} kills)</p>
+  <p>Survived till the end: </p>
+  <ul>
+    {%for survivor in survivors%}
+      <li><b>{{survivor}}</b> ({{survivor.kills}} kills)</li>
+    {%endfor%}
+  </ul>
+  <p><a id='back' href="{% url 'game:profile' player.signature %}"><code>&lt;profile&gt;</code></a></p>
+{% endblock data %}

@@ -70,6 +70,10 @@ def get_last_deathnote():
     return note
 
 
+def get_survivors():
+    return Player.objects.filter(alive=True)
+
+
 def get_last_kill():
     kills = Kill.objects.order_by('kill_time')
     return kills.first()
@@ -269,4 +273,6 @@ def statistics(request):
     if not has_game_ended():
         redirect('game:index')
 
-    return render(request, 'game/statistics.html', {'player': player})
+    return render(request, 'game/statistics.html', {'player': player,
+                                                    'best_killer': get_best_killer(),
+                                                    'survivors': get_survivors()})
