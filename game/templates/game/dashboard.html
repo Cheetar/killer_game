@@ -7,6 +7,6 @@
     <p><b>The game has started!</b></p>
   {% endif %}
   {% if last_kill %}<p>Last kill: <b>{{last_kill.kill_time}}</b></p>{% endif %}
-  {% if best_killer %}<p>Most kills: <b>{{best_killer}}</b></p>{% endif %}
+  {% if best_killer %}<p>Most kills: <b>{{best_killer}}</b> ({{best_killer.kills}} {% if best_killer.kills == 1%}kill{% else %}kills{%endif%})</p>{% endif %}
   {% if last_note %}<p>Last death note: <b>{{last_note}}</b></p>{% endif %}
 {% endblock data %}

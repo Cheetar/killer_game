@@ -7,7 +7,7 @@
   <p>Survived till the end: </p>
   <ul>
     {%for survivor in survivors%}
-      <li><b>{{survivor}}</b> ({{survivor.kills}} kills)</li>
+      <li><b>{{survivor}}</b> ({{survivor.kills}} {% if best_killer.kills == 1%}kill{% else %}kills{%endif%})</li>
     {%endfor%}
   </ul>
   <p><a id='back' href="{% url 'game:profile' player.signature %}"><code>&lt;profile&gt;</code></a></p>
