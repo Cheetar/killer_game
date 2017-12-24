@@ -1,5 +1,5 @@
 *.pyc
-*.png
+/media/qrcodes/*.png
 /.env
 /media/.initialized
 /db.sqlite3
