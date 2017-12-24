@@ -18,9 +18,9 @@ from initialize import add_player, restart_players
 
 def get_player(request):
     # Create player profiles if game has started and it hadn't been done yet
-    if (not path.isfile(".initialized") and has_game_started()):
+    if (not path.isfile(settings.MEDIA_ROOT + "/.initialized") and has_game_started()):
         restart_players()
-        system("touch .initialized")
+        system("touch " + settings.MEDIA_ROOT + "/.initialized")
         time.sleep(2)
 
     player = False
