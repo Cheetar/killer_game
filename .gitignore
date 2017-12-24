@@ -1,7 +1,7 @@
 *.pyc
 *.png
 /.env
-/.initialized
+/media/.initialized
 /db.sqlite3
 /TODOs.txt
 /geckodriver.log
