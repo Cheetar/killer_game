@@ -4,7 +4,9 @@
 
 {% block data %}
   <p>To confirm the kill scann the QR</p>
-  <img src="{{ player.qrcode.url }}"><br/><br/>
+  <div class="qrcode-background">
+    <img src="{{ player.qrcode.url }}"><br/><br/>
+  </div>
   <p>or rewrite the secret code:
   <b>{{player.kill_signature}}</b></p><br/>
   <p><a id='back' href="{% url 'game:index' %}"><code>&lt;back&gt;</code></a></p>
