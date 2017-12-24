@@ -269,7 +269,7 @@ def statistics(request):
     player = get_player(request)
 
     if not has_game_ended():
-        redirect('game:index')
+        return redirect('game:index')
 
     return render(request, 'game/statistics.html', {'player': player,
                                                     'best_killer': get_best_killer(),
