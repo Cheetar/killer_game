@@ -5,13 +5,12 @@ import StringIO
 
 import qrcode
 from django import forms
+from django.conf import settings
 from django.contrib.auth.models import User
 from django.core.files.uploadedfile import InMemoryUploadedFile
 from django.db import models
 from django.forms import ModelForm
 from django.utils.encoding import python_2_unicode_compatible
-
-DOMAIN = "http://localhost:8000/"
 
 
 # Decorator for correct printing of polish letters
@@ -63,7 +62,7 @@ class Player(models.Model):
         self.kill_signature = os.urandom(16).encode("hex")
 
     def get_absolute_url(self):
-        return DOMAIN + "kill/" + self.kill_signature + "/"
+        return settings.HOSTNAME + "kill/" + self.kill_signature + "/"
 
     def generate_qrcode(self):
         qr = qrcode.QRCode(

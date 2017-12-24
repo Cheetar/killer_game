@@ -121,6 +121,8 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
+HOSTNAME = config('HOSTNAME', cast=str, default="http://localhost:8000/")
+
 # SECURITY
 SECURE_CONTENT_TYPE_NOSNIFF = True
 X_FRAME_OPTIONS = 'DENY'

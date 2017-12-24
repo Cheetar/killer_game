@@ -39,7 +39,7 @@ def delete_all_players():
     Player.objects.all().delete()
     # QR codes are stored in /media/qr_codes/
     # when deleting players, all the QR codes perish
-    os.system('rm ' + settings.MEDIA_ROOT + '/qrcodes/*')
+    os.system('rm ' + settings.MEDIA_ROOT + 'qrcodes/*')
 
 
 def restart_players():
