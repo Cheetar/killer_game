@@ -15,7 +15,7 @@ This game is desiged to be played by a lot of people, so there is absolutely no 
 - Create admin account `python manage.py createsuperuser`
 - Start the app `python manage.py runserver`
 
-### Usefull info
+### Useful info
 - Game starts automatically after *game_start* defined in .env
 - After game has started users cannot sign up
 - If you don't want to use SSL add `SECURE_SSL_REDIRECT=False` to .env  as well as `SESSION_COOKIE_SECURE=False`
