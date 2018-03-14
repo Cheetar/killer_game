@@ -60,7 +60,7 @@ def has_game_ended():
 
 def get_best_killer():
     # Returns the player that have most kills and is alphabetically first
-    return Player.objects.all().order_by('str').order_by('alive').order_by('-kills').first()
+    return Player.objects.all().exclude(kills=0).order_by('str').order_by('alive').order_by('-kills').first()
 
 
 def get_last_deathnote():
