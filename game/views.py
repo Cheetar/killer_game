@@ -5,8 +5,9 @@ import time
 from os import path, system
 
 from django.conf import settings
-from django.contrib.auth import logout as django_logout
 from django.contrib.auth import authenticate, login
+from django.contrib.auth import logout as django_logout
+from django.contrib.auth.decorators import login_required
 from django.core.exceptions import ObjectDoesNotExist
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls.exceptions import NoReverseMatch
@@ -196,16 +197,24 @@ def deathnote(request):
                   {'dead_players': dead_players, 'player': player})
 
 
+@login_required
 def profile(request, signature):
     # If invalid signature show 404
     player = get_object_or_404(Player, signature=signature)
+    # If someone e.g. sniffed signature
+    if player != get_player(request):
+        redirect('game:index')
     kills = Kill.objects.filter(killer=player)
     return render(request, 'game/profile.html',
                   {"player": player, "kills": kills, 'game_ended': has_game_ended()})
 
 
+@login_required
 def profile_qr(request, signature):
     player = get_object_or_404(Player, signature=signature)
+    # If someone e.g. sniffed signature
+    if player != get_player(request):
+        redirect('game:index')
     return render(request, 'game/profile_qr.html', {"player": player})
 
 
